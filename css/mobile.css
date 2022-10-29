@@ -1,0 +1,66 @@
+@media (max-width:900px) {
+/*General*/
+.mobile-only {
+    display: inherit;
+    opacity: 1;
+    visibility: inherit;
+}
+
+/*Main*/
+#main {
+    width: 100%;
+}
+#main > .header {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+#main > .header > ul {
+    width: 100%;
+}
+#task-save {
+    margin-left: auto;
+}
+body.sidebar-visible #main {
+    pointer-events: none;
+}
+.display {
+    padding: 30px 50px;
+}
+#title,
+.display .title {
+    font-size: 2rem;
+    font-weight: 500;
+}
+.date-box {
+    font-size: 0.8rem;
+}
+#description,
+.display .subtitle {
+    font-size: 1rem;
+}
+
+/*Sidebar*/
+#sidebar {
+    position: absolute;
+    left: calc(0px - var(--sidebar-width));
+    z-index: 10;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+}
+body.sidebar-visible #sidebar {
+    left: 0px;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+    box-shadow: -10px 0px 15px 5px #000;
+}
+#sidebar > .header {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+#sidebar > .header > ul {
+    width: 100%;
+}
+#list-new {
+    margin-left: auto;
+}
+}

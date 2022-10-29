@@ -116,6 +116,7 @@ function setNewTask(type) {
 
 //New task action
 btnNew.addEventListener('click', () => { setNewTask('newTask') });
+mobilejsHideSidebar(btnNew);
 
 //Save task action
 btnSave.addEventListener('click', () => { setNewTask('saveTask') });
@@ -171,6 +172,7 @@ function renderTaskList() {
             activeTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
             router();
         });
+        mobilejsHideSidebar(HTMLTask);
     });
 }
 

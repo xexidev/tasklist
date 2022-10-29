@@ -14,6 +14,7 @@
     --container-width: 100%;
     --main-link-color: #362D43;
     --main-link-hover-color: #4E4260;
+    --sidebar-width: 300px;
 }
 
 /*General*/
@@ -52,6 +53,11 @@ a:hover {
     opacity: 0.2;
     pointer-events: none;
 }
+.mobile-only {
+    display:none;
+    opacity: 0;
+    visibility: hidden;
+}
 
 /*Mainframe*/
 #container {
@@ -65,16 +71,23 @@ a:hover {
     align-items: center;
 }
 #sidebar {
-    flex-basis: 300px;
-    width: 300px;
+    flex-basis: var(--sidebar-width);
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: #fff;
 }
 #main {
-    width: calc(100% - 300px);
+    width: calc(100% - var(--sidebar-width));
 }
 #sidebar > .header {
     background-color: var(--main-color-dark);
     padding-left: 40px;
     padding-right: 40px;
+}
+#sidebar > .header > ul {    
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 #main > .header {
     background-color: var(--main-color);
@@ -94,19 +107,25 @@ a:hover {
 .display .title {
     font-weight: 300;
     color: var(--main-color);
-    font-size: 56px;
+    font-size: 3rem;
     margin-left: -4px;
     width: 100%;
 }
 .display .subtitle {
     font-weight: 500;
-    font-size: 18px;
+    font-size: 1.2rem;
     line-height: 1.5;
     width: 100%;
 }
 
 /*Tasklist Header*/
 #list-new svg {
+    width: 36px;
+    height: 36px;
+    fill: #eee;
+    cursor: pointer;
+}
+#mobile-hide-sidebar svg {
     width: 36px;
     height: 36px;
     fill: #eee;
@@ -147,11 +166,11 @@ a:hover {
 }
 .tasklist-element .task-data .title {
     color: var(--main-color);
-    font-size: 18px;
+    font-size: 1.2rem;
     font-weight: 500;
 }
 .tasklist-element .task-data .date {
-    font-size: 14px;
+    font-size: 0.8rem;
 }
 .tasklist-element .task-status {
     width: 45px;
@@ -178,6 +197,12 @@ a:hover {
 }
 
 /*Task Header*/
+#mobile-show-sidebar svg {
+    width: 36px;
+    height: 36px;
+    fill: #eee;
+    cursor: pointer;
+}
 #task-save svg {
     width: 36px;
     height: 36px;
@@ -195,7 +220,7 @@ a:hover {
 #title {
     font-weight: 300;
     color: var(--main-color);
-    font-size: 56px;
+    font-size: 3rem;
     margin-left: -6px;
     width: 100%;
 }
@@ -204,16 +229,15 @@ a:hover {
 }
 .date-box {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 1.2rem;
     margin-bottom: 60px;
 }
 #date {
     font-weight: 400;
-    font-size: 18px;
 }
 #description {
     font-weight: 500;
-    font-size: 18px;
+    font-size: 1.2rem;
     line-height: 1.5;
     width: 100%;
     height: auto;
