@@ -30,6 +30,8 @@ body.sidebar-visible #main {
 .display .title {
     font-size: 2rem;
     font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
 }
 .date-box {
     font-size: 0.8rem;
