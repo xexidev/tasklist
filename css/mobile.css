@@ -28,17 +28,18 @@ body.sidebar-visible #main {
 }
 #title,
 .display .title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 500;
     line-height: 1.2;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 .date-box {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
 }
 #description,
 .display .subtitle {
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 /*Sidebar*/
