@@ -233,28 +233,33 @@ a:hover {
 .tasklist-element.expired .task-data .title {
     color: var(--expired-color);
 }
-.tasklist-element.expired .task-status svg {
+.tasklist-element.expired:not(.important) .task-status svg {
     fill: #ffffff;
+}
+.tasklist-element.important .task-status {
+    background-color: var(--important-color);
 }
 
 /*Task Header*/
-#mobile-show-sidebar svg {
+.main-btn svg {
     width: 36px;
     height: 36px;
-    fill: #eee;
     cursor: pointer;
+}
+#mobile-show-sidebar svg {
+    fill: #eee;
 }
 #task-save svg {
-    width: 36px;
-    height: 36px;
     fill: #eee;
-    cursor: pointer;
+}
+#task-important svg {
+    fill: #eee;
+}
+#main[important] #task-important svg {
+    fill: var(--important-color);
 }
 #task-delete svg {
-    width: 36px;
-    height: 36px;
     fill: var(--expired-color);
-    cursor: pointer;
 }
 
 /*Task*/
@@ -306,7 +311,7 @@ a:hover {
     pointer-events: none;
     background-color: #fff;
 }
-#task.expired #date-picker-text {
+#main[expired] #date-picker-text {
     color: var(--expired-color);
 }
 #description {

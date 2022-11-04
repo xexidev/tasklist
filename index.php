@@ -92,17 +92,24 @@
         <div id="main">
             <div class="header">
                 <ul>
-                    <li id="mobile-show-sidebar" class="mobile-only">
+                    <li id="mobile-show-sidebar" class="main-btn mobile-only">
                         <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
                             <path d="M75,57.5h95a10,10,0,0,0,0-20H75a10,10,0,0,0,0,20Zm-35-20H30a10,10,0,0,0,0,20H40a10,10,0,0,0,0-20Zm35,70h75a10,10,0,0,0,0-20H75a10,10,0,0,0,0,20Zm-35-20H30a10,10,0,0,0,0,20H40a10,10,0,0,0,0-20Zm130,55H75a10,10,0,0,0,0,20h95a10,10,0,0,0,0-20Zm-130,0H30a10,10,0,0,0,0,20H40a10,10,0,0,0,0-20Z"/>
                         </svg>
                     </li>
-                    <li id="task-save" class="" aria-label="Guardar tarea">
+                    <li id="task-save" class="main-btn" aria-label="Guardar tarea" title="Guardar tarea">
                         <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
                             <path d="M171,51,148.5,28.5a29.47,29.47,0,0,0-21-8.5H50A30.09,30.09,0,0,0,20,50V150a30.09,30.09,0,0,0,30,30H150a30.09,30.09,0,0,0,30-30V72.5A29.89,29.89,0,0,0,171,51ZM120,40V50H80V40ZM80,160V125h40v35Zm80-10a10,10,0,0,1-10,10H140V125a20.06,20.06,0,0,0-20-20H80a20.06,20.06,0,0,0-20,20v35H50a10,10,0,0,1-10-10V50A10,10,0,0,1,50,40H60V50A20.06,20.06,0,0,0,80,70h40a20.06,20.06,0,0,0,20-20V48.5l17,17a9.87,9.87,0,0,1,3,7V150Z"/>
                         </svg>
                     </li>
-                    <li id="task-delete" class="">
+                    <li id="task-important" class="main-btn" aria-label="Marcar tarea como importante" title="Tarea importante">
+                    <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Z"/>
+                        <path d="M100,125a10,10,0,0,0-10,10v7.5a10,10,0,0,0,20,0V135A10,10,0,0,0,100,125Z"/>
+                        <path d="M100,50A10,10,0,0,0,90,60v45a10,10,0,0,0,20,0V60A10,10,0,0,0,100,50Z"/>
+                    </svg>
+                    </li>
+                    <li id="task-delete" class="main-btn" aria-label="Borrar la tarea actual" title="Borrar tarea">
                         <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Z"/>
                             <path d="M128.5,74a9.67,9.67,0,0,0-14,0L100,88.5l-14-14a9.9,9.9,0,0,0-14,14l14,14-14,14a9.9,9.9,0,0,0,14,14l14-14,14,14a9.9,9.9,0,0,0,14-14l-14-14,14-14A10.77,10.77,0,0,0,128.5,74Z"/>
