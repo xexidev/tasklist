@@ -17,7 +17,7 @@ hideSidebar.addEventListener('click', () => {
     };
 });
 
-function mobilejsHideSidebar(element) {    
+function mobilejsHideSidebarOnClick(element) {    
     element.addEventListener('click', () => {
         if(body.classList.contains('sidebar-visible')) {
             body.classList.remove('sidebar-visible');

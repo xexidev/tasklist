@@ -24,11 +24,11 @@ body.sidebar-visible #main {
     pointer-events: none;
 }
 .display {
-    padding: 30px 50px;
+    padding: 30px 40px;
 }
 #title,
 .display .title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 500;
     line-height: 1.2;
     margin-bottom: 0.8rem;
@@ -45,7 +45,8 @@ body.sidebar-visible #main {
 /*Sidebar*/
 #sidebar {
     position: absolute;
-    left: calc(0px - var(--sidebar-width));
+    width: 100%;
+    left: -100%;
     z-index: 10;
     transition: ease-in-out;
     transition-duration: 300ms;
