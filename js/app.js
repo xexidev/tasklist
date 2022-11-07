@@ -1,4 +1,4 @@
-const mainHolder = document.getElementById('display-holder');
+const displayHolder = document.getElementById('display-holder');
 const main = document.getElementById('main');
 
 const taskElementTpl = document.getElementById('tasklist-element-template');
@@ -17,9 +17,10 @@ taskTpl.appendChild(taskTplContent);
 
 const btnSave = document.getElementById('task-save');
 const btnImportant = document.getElementById('task-important');
+const btnCompleted = document.getElementById('task-completed');
 const btnDeleteSingle = document.getElementById('task-delete');
 const btnNew = document.getElementById('list-new');
-const taskBtns = [btnSave,btnImportant,btnDeleteSingle];
+const taskBtns = [btnSave,btnImportant,btnCompleted,btnDeleteSingle];
 
 const HTMLTaskList = document.getElementById('tasklist');
 
@@ -46,11 +47,8 @@ class Task {
         this.description = description;
         this.modificationDate = new Date().toISOString();
         this.checkIfExpired(this.date);
-        if (container.hasAttribute("important")) {
-            this.isImportant = true;
-        } else {
-            this.isImportant = false;
-        }
+        this.isImportant = container.hasAttribute("important") ? true : false;
+        this.isCompleted = container.hasAttribute("completed") ? true : false;
     };
     putDataTo(container,title,date,description) {
         this.checkIfExpired(this.date);
@@ -61,9 +59,9 @@ class Task {
         if(this.isCompleted) { container.setAttribute("completed",""); };
         if(this.isExpired) { container.setAttribute("expired",""); };
         container.setAttribute('date-id',this.creationDate); //Not used
-        if(title) { title.value = this.title; };
-        if(date) { date.value = this.date; };
-        if(description) { description.value = this.description; };
+        if(title) { title.innerHTML = title.value = this.title; };
+        if(date) { date.innerHTML = date.value = this.date; };
+        if(description) { description.innerHTML = description.value = this.description; };
     };
     checkIfExpired(date) {
         let currentDate = new Date();
@@ -132,6 +130,15 @@ function toggleImportant() {
     };
 };
 
+//Set task as completed
+function toggleCompleted() {
+    if(main.hasAttribute("completed")) {
+        main.removeAttribute("completed");
+    } else {
+        main.setAttribute("completed","");
+    };
+};
+
 //Delete single task
 function deleteSingleTask() {    
     let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
@@ -155,6 +162,7 @@ btnNew.addEventListener('click', () => {
 });
 btnSave.addEventListener('click', () => { saveTask(); renderTaskList(); });
 btnImportant.addEventListener('click', () => { toggleImportant(); });
+btnCompleted.addEventListener('click', () => { toggleCompleted(); });
 btnDeleteSingle.addEventListener('click', () => { deleteSingleTask(); });
 
 //Render tasklist
@@ -211,7 +219,7 @@ function renderTask() {
     setButtons(taskBtns);
 
     //Render
-    mainHolder.innerHTML = taskTpl.innerHTML;
+    displayHolder.innerHTML = taskTpl.innerHTML;
 
     let title = document.getElementById('title');
     let date = document.getElementById('date');
@@ -260,7 +268,7 @@ function renderTask() {
 //Render 'without tasks' screen and set listeners
 function renderWithoutTasks() {
     unsetButtons(taskBtns);
-    mainHolder.innerHTML = withoutTasksTpl.innerHTML;
+    displayHolder.innerHTML = withoutTasksTpl.innerHTML;
     let btnNew = document.getElementsByClassName('new-task-btn');
     let btnNewArray = Array.from(btnNew);
     btnNewArray.forEach(btn => {
@@ -273,7 +281,7 @@ function renderWithoutTasks() {
 //Render 'welcome' screen and set listeners
 function renderWelcome() {
     unsetButtons(taskBtns);
-    mainHolder.innerHTML = welcomeTpl.innerHTML;
+    displayHolder.innerHTML = welcomeTpl.innerHTML;
     let btnNew = document.getElementsByClassName('new-task-btn');
     let btnNewArray = Array.from(btnNew);
     btnNewArray.forEach(btn => {
@@ -293,7 +301,9 @@ unsavedChanges = () => {
             activeTask.date !== dateInDisplay || 
             activeTask.description !== descriptionInDisplay || 
             (!activeTask.isImportant && main.hasAttribute("important")) ||
-            (activeTask.isImportant && !main.hasAttribute("important"))) {
+            (activeTask.isImportant && !main.hasAttribute("important")) || 
+            (!activeTask.isCompleted && main.hasAttribute("completed")) ||
+            (activeTask.isCompleted && !main.hasAttribute("completed"))) {
             return true;
         } else {
             return false;

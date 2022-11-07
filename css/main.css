@@ -230,14 +230,17 @@ a:hover {
 .tasklist-element[expired] .task-status {
     background-color: var(--expired-color);
 }
-.tasklist-element[expired] .task-data .title {
+.tasklist-element[expired]:not([completed]) .task-data .title {
     color: var(--expired-color);
 }
-.tasklist-element[expired]:not([important]) .task-status svg {
+.tasklist-element[expired]:not([important]):not([completed]) .task-status svg {
     fill: #ffffff;
 }
 .tasklist-element[important] .task-status {
     background-color: var(--important-color);
+}
+.tasklist-element[completed] .task-status {
+    background-color: var(--completed-color);
 }
 
 /*Task Header*/
@@ -255,8 +258,14 @@ a:hover {
 #task-important svg {
     fill: #eee;
 }
+#task-completed svg {
+    fill: #eee;
+}
 #main[important] #task-important svg {
     fill: var(--important-color);
+}
+#main[completed] #task-completed svg {
+    fill: var(--completed-color);
 }
 #task-delete svg {
     fill: var(--expired-color);
