@@ -227,16 +227,16 @@ a:hover {
 .tasklist-element.selected .task-status svg {
     display: initial;
 }
-.tasklist-element.expired .task-status {
+.tasklist-element[expired] .task-status {
     background-color: var(--expired-color);
 }
-.tasklist-element.expired .task-data .title {
+.tasklist-element[expired] .task-data .title {
     color: var(--expired-color);
 }
-.tasklist-element.expired:not(.important) .task-status svg {
+.tasklist-element[expired]:not([important]) .task-status svg {
     fill: #ffffff;
 }
-.tasklist-element.important .task-status {
+.tasklist-element[important] .task-status {
     background-color: var(--important-color);
 }
 

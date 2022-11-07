@@ -28,8 +28,8 @@
         </li>
     </template>
 
-    <template id="task-template">        
-        <div id="task" class="display" main-date-id="">
+    <template id="task-template">
+        <div id="task" class="display">
             <form action="#" id="form">
                 <textarea id="title" type="text" name="title" value="" placeholder="Tarea sin título" aria-label="Introduce el título de la tarea"></textarea>
                 <div class="date-box">
@@ -118,7 +118,7 @@
                 </ul>
             </div>          
         
-            <div id="main-holder"></div>
+            <div id="display-holder"></div>
 
         </div>
     </div>

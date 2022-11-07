@@ -1,4 +1,4 @@
-const mainHolder = document.getElementById('main-holder');
+const mainHolder = document.getElementById('display-holder');
 const main = document.getElementById('main');
 
 const taskElementTpl = document.getElementById('tasklist-element-template');
@@ -23,8 +23,6 @@ const taskBtns = [btnSave,btnImportant,btnDeleteSingle];
 
 const HTMLTaskList = document.getElementById('tasklist');
 
-let inDisplay = '';
-
 let taskList = []
 if (localStorage.getItem('taskList')) {
     taskList = JSON.parse(localStorage.getItem('taskList'));
@@ -42,22 +40,30 @@ class Task {
         this.isExpired = false;
         this.isActive = true;
     };
-    getDataFromDOM() {
-        this.title = document.getElementById('title').value;
-        this.date = document.getElementById('date').value;
-        this.description = document.getElementById('description').value;
+    getDataFrom(container,title,date,description) {
+        this.title = title;
+        this.date = date;
+        this.description = description;
         this.modificationDate = new Date().toISOString();
         this.checkIfExpired(this.date);
-        if (main.hasAttribute("important")) {
+        if (container.hasAttribute("important")) {
             this.isImportant = true;
         } else {
             this.isImportant = false;
         }
     };
-    putDataTo(title,date,description) {
-        title.value = this.title;
-        date.value = this.date;
-        description.value = this.description;
+    putDataTo(container,title,date,description) {
+        this.checkIfExpired(this.date);
+        container.removeAttribute("important");
+        container.removeAttribute("expired");
+        container.removeAttribute("completed");
+        if(this.isImportant) { container.setAttribute("important",""); };
+        if(this.isCompleted) { container.setAttribute("completed",""); };
+        if(this.isExpired) { container.setAttribute("expired",""); };
+        container.setAttribute('date-id',this.creationDate); //Not used
+        if(title) { title.value = this.title; };
+        if(date) { date.value = this.date; };
+        if(description) { description.value = this.description; };
     };
     checkIfExpired(date) {
         let currentDate = new Date();
@@ -81,26 +87,19 @@ if (typeof(Storage) !== 'undefined') {
 
 //Set the route
 function router() {
-    reset();
-    if (taskList.length === 0) {                        //List is empty
-        inDisplay = 'empty';
+    renderTaskList();
+    if (taskList.length === 0) {                        //List is empty        
         renderWithoutTasks();
-        unsetButtons(taskBtns);
         document.title = 'Ninguna tarea creada. Crea una nueva tarea.';
     } else {                                            //List is not empty
         if(typeof(activeTask) === 'undefined') {        //No active task
-            inDisplay = 'welcome';
             renderWelcome();
-            unsetButtons(taskBtns);
             document.title = 'Selecciona o crea una tarea.';
         } else {                                        //Active task exists
-            inDisplay = 'task';
             renderTask();
-            setButtons(taskBtns);
             document.title = activeTask.title !== '' ? activeTask.title : 'Tarea sin título';
         };        
     };
-    renderTaskList();
 };
 
 //New task
@@ -109,16 +108,19 @@ function newTask() {
     activeTask = new Task('','','',currentDate);
     taskList.unshift(activeTask);
     localStorage.setItem('taskList',JSON.stringify(taskList));
-    router();
+    renderTaskList();
+    renderTask();
 };
 
 //Save task
-function saveTask() {    
-    activeTask.getDataFromDOM();
+function saveTask() {
+    let title = document.getElementById('title').value;
+    let date = document.getElementById('date').value;
+    let description = document.getElementById('description').value;
+    activeTask.getDataFrom(main,title,date,description);
     taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)] = Object.assign({...activeTask});
     if(activeTask.isExpired) { alert('La fecha límite de la tarea es anterior a la actual, aparecerá como caducada.'); };
-    localStorage.setItem('taskList',JSON.stringify(taskList));
-    router();
+    localStorage.setItem('taskList',JSON.stringify(taskList));    
 };
 
 //Set task as important
@@ -126,7 +128,7 @@ function toggleImportant() {
     if(main.hasAttribute("important")) {
         main.removeAttribute("important");
     } else {
-        main.setAttribute("important","true");
+        main.setAttribute("important","");
     };
 };
 
@@ -142,53 +144,63 @@ function deleteSingleTask() {
 };
 
 //Set listeners on headers's buttons
-btnNew.addEventListener('click', () => { checkUnsavedChanges(); newTask(); });
-btnSave.addEventListener('click', () => { saveTask(); });
+btnNew.addEventListener('click', () => {    
+    if (unsavedChanges()) {
+        let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
+        if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
+            saveTask();
+        };
+    };
+    newTask();
+});
+btnSave.addEventListener('click', () => { saveTask(); renderTaskList(); });
 btnImportant.addEventListener('click', () => { toggleImportant(); });
 btnDeleteSingle.addEventListener('click', () => { deleteSingleTask(); });
-
-//Reset values
-function reset() {
-    taskList.forEach(task => {
-        task.isExpired = isExpired(task.date);
-    });  
-    main.removeAttribute("important");
-    main.removeAttribute("expired");
-    main.removeAttribute("completed");
-};
 
 //Render tasklist
 function renderTaskList() {
     let newList = document.createElement('div');
     
     taskList.forEach(task => {
+        task = Object.assign(new Task, {...task});
+
+        //Render elements
         let listElementTpl = taskElementTpl.content.cloneNode(true);
         let listElement =  listElementTpl.querySelector('.tasklist-element');
         let listElementTitle = listElementTpl.querySelector('.title');
         let listElementDate = listElementTpl.querySelector('.date');
-
+        
+        task.putDataTo(listElement,listElementTitle,listElementDate);
         listElement.setAttribute('title',task.title);
-        listElement.setAttribute('date-id', `${task.creationDate}`);
-        if (task.isExpired) { listElement.classList.add('expired') };
-        if (task.isImportant) { listElement.classList.add('important') };
         listElementTitle.innerHTML = task.title === '' ? 'Tarea sin título' : task.title;
-        listElementDate.innerHTML = task.date;
+
         newList.appendChild(listElementTpl);
     });    
     HTMLTaskList.innerHTML = newList.innerHTML;
 
     //Set listeners    
     let HTMLTasks = document.querySelectorAll('.tasklist-element');
-    HTMLTasks.forEach(HTMLTask => {
+    HTMLTasks.forEach(HTMLTask => {        
+        HTMLTask.classList.remove('selected');
         if(typeof(activeTask) !== 'undefined' && HTMLTask.getAttribute('date-id') === activeTask.creationDate) {
             HTMLTask.classList.add('selected');
         };
         HTMLTask.addEventListener('click', () => {
-            checkUnsavedChanges();
-            HTMLTask.classList.remove('selected');
-            selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
-            activeTask = Object.assign(new Task, {...selectedTask});
-            router();
+            if (unsavedChanges()) {
+                let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
+                if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
+                    saveTask();
+                    selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
+                    activeTask = Object.assign(new Task, {...selectedTask});
+                    renderTaskList();
+                };
+            } else {
+                selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
+                activeTask = Object.assign(new Task, {...selectedTask});
+                HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
+                HTMLTask.classList.add('selected');
+            };
+            renderTask();
         });
         mobilejsHideSidebarOnClick(HTMLTask);
     });
@@ -196,23 +208,18 @@ function renderTaskList() {
 
 //Render task
 function renderTask() {
-    //Set main HTML attributes
-    if(activeTask.isImportant) { main.setAttribute("important","true"); };
-    if(activeTask.isCompleted) { main.setAttribute("completed","true"); };
-    if(activeTask.isExpired) { main.setAttribute("expired","true"); };
+    setButtons(taskBtns);
 
     //Render
     mainHolder.innerHTML = taskTpl.innerHTML;
 
-    let task = document.getElementById('task');
     let title = document.getElementById('title');
     let date = document.getElementById('date');
     let description = document.getElementById('description');
     let dateText = document.getElementById('date-picker-text');
 
-    activeTask.putDataTo(title,date,description);
+    activeTask.putDataTo(main,title,date,description);
     dateText.innerHTML = activeTask.date === '' ? 'Sin fecha' : activeTask.date;
-    task.setAttribute('main-date-id',activeTask.creationDate);
 
     //Title & Description auto-resize
     resizeTextArea();
@@ -228,11 +235,14 @@ function renderTask() {
 
     //Date text on change listener    
     date.addEventListener('change', () => {
-        dateText.innerHTML = date.value === '' ? 'Sin fecha' : date.value;
-        if (isExpired(date.value)) {
-            main.setAttribute("expired","true");
+        dateText.innerHTML = date.value === '' ? 'Sin fecha' : date.value;        
+        let currentDate = new Date();
+        let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
+        let taskIsoDate = parseInt(dateText.innerHTML.replace(/-/g,''))
+        if (isoDate > taskIsoDate) {
+            main.setAttribute("expired","");
         } else 
-        if (!isExpired(date.value) && main.hasAttribute("expired")) {
+        if (isoDate <= taskIsoDate) {
             main.removeAttribute("expired");
         };
     });
@@ -242,14 +252,40 @@ function renderTask() {
         if(e.code === 'Enter' || e.code === 'NumpadEnter') {
             e.preventDefault();
             saveTask();
-            router();
+            renderTaskList();
         };
     });
 };
 
+//Render 'without tasks' screen and set listeners
+function renderWithoutTasks() {
+    unsetButtons(taskBtns);
+    mainHolder.innerHTML = withoutTasksTpl.innerHTML;
+    let btnNew = document.getElementsByClassName('new-task-btn');
+    let btnNewArray = Array.from(btnNew);
+    btnNewArray.forEach(btn => {
+        btn.addEventListener('click', () => { 
+            newTask();
+        });
+    });
+};
+
+//Render 'welcome' screen and set listeners
+function renderWelcome() {
+    unsetButtons(taskBtns);
+    mainHolder.innerHTML = welcomeTpl.innerHTML;
+    let btnNew = document.getElementsByClassName('new-task-btn');
+    let btnNewArray = Array.from(btnNew);
+    btnNewArray.forEach(btn => {
+        btn.addEventListener('click', () => { 
+            newTask();
+        });
+    });
+};
+
 //Check for unsaved changes
-function checkUnsavedChanges() {    
-    if(inDisplay === 'task') {
+unsavedChanges = () => {
+    if(typeof(activeTask) !== 'undefined') {
         let titleInDisplay = document.getElementById('title').value;
         let dateInDisplay = document.getElementById('date').value;
         let descriptionInDisplay = document.getElementById('description').value;
@@ -258,48 +294,6 @@ function checkUnsavedChanges() {
             activeTask.description !== descriptionInDisplay || 
             (!activeTask.isImportant && main.hasAttribute("important")) ||
             (activeTask.isImportant && !main.hasAttribute("important"))) {
-            let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
-            if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
-                saveTask();
-            };
-        };
-    };
-};
-
-
-//Render 'without tasks' screen and set listeners
-function renderWithoutTasks() {
-    mainHolder.innerHTML = withoutTasksTpl.innerHTML;
-    let btnNew = document.getElementsByClassName('new-task-btn');
-    let btnNewArray = Array.from(btnNew);
-    btnNewArray.forEach(btn => {
-        btn.addEventListener('click', () => { 
-            checkUnsavedChanges();
-            newTask();
-        });
-    });
-};
-
-//Render 'welcome' screen and set listeners
-function renderWelcome() {
-    mainHolder.innerHTML = welcomeTpl.innerHTML;
-    let btnNew = document.getElementsByClassName('new-task-btn');
-    let btnNewArray = Array.from(btnNew);
-    btnNewArray.forEach(btn => {
-        btn.addEventListener('click', () => { 
-            checkUnsavedChanges();
-            newTask();
-        });
-    });
-};
-
-//Expiration checker
-function isExpired(taskDate) {
-    if(taskDate !== '') {
-        let currentDate = new Date();
-        let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
-        let taskIsoDate = parseInt(taskDate.replace(/-/g,''))
-        if(isoDate > taskIsoDate) {
             return true;
         } else {
             return false;
