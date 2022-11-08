@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/main.css?ver=<?php echo filemtime(__DIR__.'/css/main.css') ?>">
     <link rel="stylesheet" href="./css/mobile.css?ver=<?php echo filemtime(__DIR__.'/css/mobile.css') ?>">
-    <title>Tareas Pendientes</title>
+    <title>Xexi TaskList</title>
 </head>
 <body>
 
@@ -14,16 +14,18 @@
     <template id="tasklist-element-template">
         <li class="tasklist-element">
             <div class="task-check">
-                <input type="checkbox">
+                <input class="task-checkbox" type="checkbox">
             </div>
-            <div class="task-data">
-                <div class="title"></div>
-                <div class="date"></div>
-            </div>
-            <div class="task-status">
-                <svg x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
-                    <path d="M86.2,153.8c-2.5,0-5.1-1-7-2.9c-3.9-3.9-3.9-10.2,0-14L116,100L79.2,63.2c-3.9-3.9-3.9-10.2,0-14c3.9-3.9,10.2-3.9,14,0 L137.1,93c3.9,3.9,3.9,10.2,0,14l-43.8,43.8C91.3,152.8,88.8,153.8,86.2,153.8z"/>
-                </svg>
+            <div class="task-selectable">
+                <div class="task-data">
+                    <div class="title"></div>
+                    <div class="date"></div>
+                </div>
+                <div class="task-status">
+                    <svg x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+                        <path d="M86.2,153.8c-2.5,0-5.1-1-7-2.9c-3.9-3.9-3.9-10.2,0-14L116,100L79.2,63.2c-3.9-3.9-3.9-10.2,0-14c3.9-3.9,10.2-3.9,14,0 L137.1,93c3.9,3.9,3.9,10.2,0,14l-43.8,43.8C91.3,152.8,88.8,153.8,86.2,153.8z"/>
+                    </svg>
+                </div>
             </div>
         </li>
     </template>
@@ -83,6 +85,12 @@
                     <li id="list-new" aria-label="Crear nueva tarea">
                         <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Zm30-72.5H110v-20a10,10,0,0,0-20,0v20H70a10,10,0,0,0,0,20H90v20a10,10,0,0,0,20,0v-20h20a10,10,0,0,0,0-20Z"/>
+                        </svg>
+                    </li>
+                    <li id="list-delete-bulk" class="main-btn" aria-label="Borrar tareas seleccionadas" title="Borrar tareas seleccionadas">
+                        <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Z"/>
+                            <path d="M128.5,74a9.67,9.67,0,0,0-14,0L100,88.5l-14-14a9.9,9.9,0,0,0-14,14l14,14-14,14a9.9,9.9,0,0,0,14,14l14-14,14,14a9.9,9.9,0,0,0,14-14l-14-14,14-14A10.77,10.77,0,0,0,128.5,74Z"/>
                         </svg>
                     </li>
                 </ul>

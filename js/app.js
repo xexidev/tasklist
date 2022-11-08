@@ -1,5 +1,6 @@
 const displayHolder = document.getElementById('display-holder');
 const main = document.getElementById('main');
+const sidebar = document.getElementById('sidebar');
 
 const taskElementTpl = document.getElementById('tasklist-element-template');
 
@@ -19,10 +20,13 @@ const btnSave = document.getElementById('task-save');
 const btnImportant = document.getElementById('task-important');
 const btnCompleted = document.getElementById('task-completed');
 const btnDeleteSingle = document.getElementById('task-delete');
+const btnDeleteBulk = document.getElementById('list-delete-bulk');
 const btnNew = document.getElementById('list-new');
 const taskBtns = [btnSave,btnImportant,btnCompleted,btnDeleteSingle];
 
 const HTMLTaskList = document.getElementById('tasklist');
+
+let checkedTasks = [];
 
 let taskList = []
 if (localStorage.getItem('taskList')) {
@@ -150,6 +154,34 @@ function deleteSingleTask() {
     };
 };
 
+//Delete multiple tasks
+function deleteMultipleTasks() {    
+    if (confirm(`¿Eliminar las tareas seleccionadas?`)) {
+        let newTaskList = [];
+        //Check if task is checked
+        function isChecked(task) {
+            let isChecked = false;
+            checkedTasks.forEach(checked => {
+                if (task.creationDate === checked) {
+                    isChecked = true;
+                };
+            })
+            return isChecked;
+        };
+        taskList.forEach(task => {
+            if (!isChecked(task)) {
+                newTaskList.push(task);
+            };
+        });
+        taskList = newTaskList;
+        checkedTasks = [];
+        sidebar.removeAttribute('checked');
+        localStorage.setItem('taskList',JSON.stringify(taskList));
+        delete activeTask;
+        router();
+    };
+};
+
 //Set listeners on headers's buttons
 btnNew.addEventListener('click', () => {    
     if (unsavedChanges()) {
@@ -164,6 +196,7 @@ btnSave.addEventListener('click', () => { saveTask(); renderTaskList(); });
 btnImportant.addEventListener('click', () => { toggleImportant(); });
 btnCompleted.addEventListener('click', () => { toggleCompleted(); });
 btnDeleteSingle.addEventListener('click', () => { deleteSingleTask(); });
+btnDeleteBulk.addEventListener('click', () => { deleteMultipleTasks(); });
 
 //Render tasklist
 function renderTaskList() {
@@ -188,29 +221,47 @@ function renderTaskList() {
 
     //Set listeners    
     let HTMLTasks = document.querySelectorAll('.tasklist-element');
-    HTMLTasks.forEach(HTMLTask => {        
+    HTMLTasks.forEach(HTMLTask => {       
+        //Search selected task 
         HTMLTask.classList.remove('selected');
         if(typeof(activeTask) !== 'undefined' && HTMLTask.getAttribute('date-id') === activeTask.creationDate) {
             HTMLTask.classList.add('selected');
         };
-        HTMLTask.addEventListener('click', () => {
-            if (unsavedChanges()) {
-                let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
-                if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
-                    saveTask();
+        //Checkbox listener
+        let listElementCheckbox = HTMLTask.querySelector('.task-checkbox');
+        listElementCheckbox.addEventListener('change', () => {
+            if(listElementCheckbox.checked) {
+                checkedTasks.push(HTMLTask.getAttribute('date-id'));
+            } else {
+                checkedTasks.pop(HTMLTask.getAttribute('task-id'));
+            };
+            if(checkedTasks.length === 0) {
+                sidebar.removeAttribute('checked');
+            } else {
+                sidebar.setAttribute('checked','');
+            }
+        });
+        //Select task listener
+        HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
+            if (!HTMLTask.classList.contains('selected')) {
+                if (unsavedChanges()) {
+                    let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
+                    if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
+                        saveTask();
+                        selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
+                        activeTask = Object.assign(new Task, {...selectedTask});
+                        renderTaskList();
+                    };
+                } else {
                     selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
                     activeTask = Object.assign(new Task, {...selectedTask});
-                    renderTaskList();
+                    HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
+                    HTMLTask.classList.add('selected');
                 };
-            } else {
-                selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
-                activeTask = Object.assign(new Task, {...selectedTask});
-                HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
-                HTMLTask.classList.add('selected');
+                renderTask();
             };
-            renderTask();
+            mobilejsHideSidebarOnClick(HTMLTask);
         });
-        mobilejsHideSidebarOnClick(HTMLTask);
     });
 };
 

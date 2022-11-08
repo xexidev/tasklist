@@ -150,6 +150,14 @@ a:hover {
     fill: #eee;
     cursor: pointer;
 }
+#sidebar #list-delete-bulk {
+    opacity: 0.2;
+    pointer-events: none;
+}
+#sidebar[checked] #list-delete-bulk {
+    opacity: 1;
+    pointer-events: all;
+}
 #mobile-hide-sidebar svg {
     width: 36px;
     height: 36px;
@@ -182,11 +190,15 @@ a:hover {
 .tasklist-element .task-check input {
     width: 21px;
     height: 21px;
-    display: none;
+}
+.tasklist-element .task-selectable {
+    width: calc(100% - 45px);
+    flex-basis: calc(100% - 45px);
+    display: flex;
 }
 .tasklist-element .task-data {
-    width: calc(100% - 45px - 45px);
-    flex-basis: calc(100% - 45px - 45px);
+    width: calc(100% - 45px);
+    flex-basis: calc(100% - 45px);
     padding: 18px 0;
 }
 .tasklist-element .task-data .title {
@@ -220,9 +232,6 @@ a:hover {
 .tasklist-element .task-status svg {
     fill: var(--main-color);
     display: none;
-}
-.tasklist-element.selected {
-    pointer-events: none;
 }
 .tasklist-element.selected .task-status svg {
     display: initial;
@@ -266,6 +275,9 @@ a:hover {
 }
 #main[completed] #task-completed svg {
     fill: var(--completed-color);
+}
+#list-delete-bulk svg {
+    fill: var(--expired-color);
 }
 #task-delete svg {
     fill: var(--expired-color);
