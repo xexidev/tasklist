@@ -33,7 +33,7 @@
     <template id="task-template">
         <div id="task" class="display">
             <form action="#" id="form">
-                <textarea id="title" type="text" name="title" value="" placeholder="Tarea sin título" aria-label="Introduce el título de la tarea"></textarea>
+                <textarea id="title" type="text" name="title" value="" placeholder="Untitled task" aria-label="Introduce el título de la tarea"></textarea>
                 <div class="date-box">
                     <span>Límite: </span>
                     <div class="date-picker">
@@ -110,17 +110,22 @@
                             <path d="M171,51,148.5,28.5a29.47,29.47,0,0,0-21-8.5H50A30.09,30.09,0,0,0,20,50V150a30.09,30.09,0,0,0,30,30H150a30.09,30.09,0,0,0,30-30V72.5A29.89,29.89,0,0,0,171,51ZM120,40V50H80V40ZM80,160V125h40v35Zm80-10a10,10,0,0,1-10,10H140V125a20.06,20.06,0,0,0-20-20H80a20.06,20.06,0,0,0-20,20v35H50a10,10,0,0,1-10-10V50A10,10,0,0,1,50,40H60V50A20.06,20.06,0,0,0,80,70h40a20.06,20.06,0,0,0,20-20V48.5l17,17a9.87,9.87,0,0,1,3,7V150Z"/>
                         </svg>
                     </li>
-                    <li id="task-important" class="main-btn" aria-label="Marcar tarea como importante" title="Tarea importante">
+                    <li id="task-active" class="main-btn" aria-label="Marcar tarea como activa" title="Tarea activa">
                     <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Z"/>
-                        <path d="M100,125a10,10,0,0,0-10,10v7.5a10,10,0,0,0,20,0V135A10,10,0,0,0,100,125Z"/>
-                        <path d="M100,50A10,10,0,0,0,90,60v45a10,10,0,0,0,20,0V60A10,10,0,0,0,100,50Z"/>
+                        <path d="M156.31,43.63a9.9,9.9,0,0,0-14,14,60.1,60.1,0,1,1-85,0,9.9,9.9,0,0,0-14-14c-31,31-31,82,0,113s82,31,113,0A79.37,79.37,0,0,0,156.31,43.63Zm-56.5,66.5a10,10,0,0,0,10-10v-70a10,10,0,0,0-20,0v70A10,10,0,0,0,99.81,110.13Z"/>
                     </svg>
                     </li>
+                    <li id="task-important" class="main-btn" aria-label="Marcar tarea como importante" title="Tarea importante">
+                        <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165Z"/>
+                            <path d="M100,125a10,10,0,0,0-10,10v7.5a10,10,0,0,0,20,0V135A10,10,0,0,0,100,125Z"/>
+                            <path d="M100,50A10,10,0,0,0,90,60v45a10,10,0,0,0,20,0V60A10,10,0,0,0,100,50Z"/>
+                        </svg>
+                    </li>
                     <li id="task-completed" class="main-btn" aria-label="Marcar tarea como completada" title="Tarea completada">
-                    <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M177.6,80.43a10,10,0,1,0-19.5,4.5,60.76,60.76,0,0,1-6,44.5c-16.5,28.5-53.5,38.5-82,22-28.5-16-38.5-53-22-81.5s53.5-38.5,82-22a9.86,9.86,0,1,0,10-17c-38.5-22.5-87-9.5-109.5,29a80.19,80.19,0,1,0,147,20.5Zm-109.5,11a10.12,10.12,0,0,0-11,17l40,25a10.08,10.08,0,0,0,5.5,1.5,10.44,10.44,0,0,0,8-4l52.5-67.5c3.5-4.5,2.5-10.5-2-14s-10.5-2.5-14,2l-47,60Z"/>
-                    </svg>
+                        <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M177.6,80.43a10,10,0,1,0-19.5,4.5,60.76,60.76,0,0,1-6,44.5c-16.5,28.5-53.5,38.5-82,22-28.5-16-38.5-53-22-81.5s53.5-38.5,82-22a9.86,9.86,0,1,0,10-17c-38.5-22.5-87-9.5-109.5,29a80.19,80.19,0,1,0,147,20.5Zm-109.5,11a10.12,10.12,0,0,0-11,17l40,25a10.08,10.08,0,0,0,5.5,1.5,10.44,10.44,0,0,0,8-4l52.5-67.5c3.5-4.5,2.5-10.5-2-14s-10.5-2.5-14,2l-47,60Z"/>
+                        </svg>
                     </li>
                     <li id="task-delete" class="main-btn" aria-label="Borrar la tarea actual" title="Borrar tarea">
                         <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">

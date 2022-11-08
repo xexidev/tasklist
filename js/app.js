@@ -17,12 +17,13 @@ const taskTplContent = document.getElementById('task-template').content.cloneNod
 taskTpl.appendChild(taskTplContent);
 
 const btnSave = document.getElementById('task-save');
+const btnActive = document.getElementById('task-active');
 const btnImportant = document.getElementById('task-important');
 const btnCompleted = document.getElementById('task-completed');
 const btnDeleteSingle = document.getElementById('task-delete');
 const btnDeleteBulk = document.getElementById('list-delete-bulk');
 const btnNew = document.getElementById('list-new');
-const taskBtns = [btnSave,btnImportant,btnCompleted,btnDeleteSingle];
+const taskBtns = [btnSave,btnActive,btnImportant,btnCompleted,btnDeleteSingle];
 
 const HTMLTaskList = document.getElementById('tasklist');
 
@@ -53,16 +54,21 @@ class Task {
         this.checkIfExpired(this.date);
         this.isImportant = container.hasAttribute("important") ? true : false;
         this.isCompleted = container.hasAttribute("completed") ? true : false;
+        this.isActive = container.hasAttribute("active") ? true : false;
     };
     putDataTo(container,title,date,description) {
         this.checkIfExpired(this.date);
+        //Reset attributes
         container.removeAttribute("important");
         container.removeAttribute("expired");
         container.removeAttribute("completed");
+        container.removeAttribute("active");
+        //Set attributes
         if(this.isImportant) { container.setAttribute("important",""); };
         if(this.isCompleted) { container.setAttribute("completed",""); };
         if(this.isExpired) { container.setAttribute("expired",""); };
-        container.setAttribute('date-id',this.creationDate); //Not used
+        if(this.isActive) { container.setAttribute("active",""); };
+        container.setAttribute('date-id',this.creationDate); //Not in use
         if(title) { title.innerHTML = title.value = this.title; };
         if(date) { date.innerHTML = date.value = this.date; };
         if(description) { description.innerHTML = description.value = this.description; };
@@ -123,6 +129,15 @@ function saveTask() {
     taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)] = Object.assign({...activeTask});
     if(activeTask.isExpired) { alert('La fecha límite de la tarea es anterior a la actual, aparecerá como caducada.'); };
     localStorage.setItem('taskList',JSON.stringify(taskList));    
+};
+
+//Set task as active
+function toggleActive() {
+    if(main.hasAttribute("active")) {
+        main.removeAttribute("active");
+    } else {
+        main.setAttribute("active","");
+    };
 };
 
 //Set task as important
@@ -193,6 +208,7 @@ btnNew.addEventListener('click', () => {
     newTask();
 });
 btnSave.addEventListener('click', () => { saveTask(); renderTaskList(); });
+btnActive.addEventListener('click', () => { toggleActive(); });
 btnImportant.addEventListener('click', () => { toggleImportant(); });
 btnCompleted.addEventListener('click', () => { toggleCompleted(); });
 btnDeleteSingle.addEventListener('click', () => { deleteSingleTask(); });
@@ -239,7 +255,7 @@ function renderTaskList() {
                 sidebar.removeAttribute('checked');
             } else {
                 sidebar.setAttribute('checked','');
-            }
+            };
         });
         //Select task listener
         HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
@@ -354,7 +370,9 @@ unsavedChanges = () => {
             (!activeTask.isImportant && main.hasAttribute("important")) ||
             (activeTask.isImportant && !main.hasAttribute("important")) || 
             (!activeTask.isCompleted && main.hasAttribute("completed")) ||
-            (activeTask.isCompleted && !main.hasAttribute("completed"))) {
+            (activeTask.isCompleted && !main.hasAttribute("completed")) ||
+            (!activeTask.isActive && main.hasAttribute("active")) ||
+            (activeTask.isActive && !main.hasAttribute("active"))) {
             return true;
         } else {
             return false;

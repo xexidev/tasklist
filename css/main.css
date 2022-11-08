@@ -251,6 +251,16 @@ a:hover {
 .tasklist-element[completed] .task-status {
     background-color: var(--completed-color);
 }
+.tasklist-element:not([active]) {
+    background-color: #ffffff;
+}
+.tasklist-element:not([active]) .task-status {
+    background-color: #fafafa;
+}
+.tasklist-element:not([active]) .title,
+.tasklist-element:not([active]) .date {
+    color: #cccccc;
+}
 
 /*Task Header*/
 .main-btn svg {
@@ -270,11 +280,17 @@ a:hover {
 #task-completed svg {
     fill: #eee;
 }
+#task-active svg {
+    fill: #eee;
+}
 #main[important] #task-important svg {
     fill: var(--important-color);
 }
 #main[completed] #task-completed svg {
     fill: var(--completed-color);
+}
+#main:not([active]) #task-active svg {
+    fill: #999999;
 }
 #list-delete-bulk svg {
     fill: var(--expired-color);
