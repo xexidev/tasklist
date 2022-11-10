@@ -10,6 +10,8 @@
     --expired-color:#F23374;
     --important-color:#F5FF6B;
     --completed-color:#C9FF78;
+    --important-color-dark:#d5e31b;
+    --completed-color-dark:#99dd33;
     --off-color:#FAFAFA;
     --container-width: 100%;
     --main-link-color: #362D43;
@@ -60,6 +62,11 @@ a:hover {
     opacity: 0;
     visibility: hidden;
 }
+.desktop-only {
+    display:initial;
+    opacity: 1;
+    visibility: visible;
+}
 
 /*Mainframe*/
 #container {
@@ -100,6 +107,8 @@ a:hover {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    width: 100%;
+    align-items: center;
 }
 
 /*Container*/
@@ -123,7 +132,7 @@ a:hover {
 }
 .display .btn {
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
 }
 .display .btn svg {
@@ -144,11 +153,13 @@ a:hover {
 }
 
 /*Tasklist Header*/
-#list-new svg {
+.list-btn svg {
     width: 36px;
     height: 36px;
-    fill: #eee;
     cursor: pointer;
+}
+#list-new svg {
+    fill: #eee;
 }
 #sidebar #list-delete-bulk {
     opacity: 0.2;
@@ -274,6 +285,9 @@ a:hover {
 #task-save svg {
     fill: #eee;
 }
+#task-new {
+    fill: #eee;
+}
 #task-important svg {
     fill: #eee;
 }
@@ -282,6 +296,15 @@ a:hover {
 }
 #task-active svg {
     fill: #eee;
+}
+#task-delete svg {
+    fill: var(--expired-color);
+}
+#language {
+    margin-left: auto;
+}
+#language > span {
+    color: #fff;
 }
 #main[important] #task-important svg {
     fill: var(--important-color);
@@ -295,8 +318,64 @@ a:hover {
 #list-delete-bulk svg {
     fill: var(--expired-color);
 }
-#task-delete svg {
-    fill: var(--expired-color);
+
+/*Language*/
+#language {
+    position: relative;
+    align-items: center;
+}
+#language-btn {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+#language-btn svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    fill: #eee;
+}
+#language-text {
+    font-size: 0.9rem;
+}
+#language-btn span {
+    color: #eee;
+}
+#language-list {
+    position: absolute;
+    z-index: 10;
+    background-color: #fff;
+    padding: 6px 8px 8px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 9px -7px #000;
+    visibility: hidden;
+    opacity: 0;
+}
+#language-list.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
+}
+#language-list.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
+}
+#language-list li {
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: color 300ms ease-in-out;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+#language-list li.selected {
+    color: #362D43;
+}
+#language-list li:hover {
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #362D43;
+    transition: color 300ms ease-in-out;
 }
 
 /*Task*/

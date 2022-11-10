@@ -23,6 +23,7 @@ const btnCompleted = document.getElementById('task-completed');
 const btnDeleteSingle = document.getElementById('task-delete');
 const btnDeleteBulk = document.getElementById('list-delete-bulk');
 const btnNew = document.getElementById('list-new');
+const btnTaskNew = document.getElementById('task-new');
 const taskBtns = [btnSave,btnActive,btnImportant,btnCompleted,btnDeleteSingle];
 
 const HTMLTaskList = document.getElementById('tasklist');
@@ -86,11 +87,11 @@ class Task {
 };
 
 //Check localStorage and start
-if (typeof(Storage) !== 'undefined') {    
+if (typeof(Storage) !== 'undefined') {
     router();
 } else {
-    alert('Este navegador no sporta el almacenamiento local de datos, la aplicación se detendrá.')
-    throw new Error('LocalStorage is not supported.');
+    alert(txtkey_localStorageError)
+    throw new Error('LocalStorage not supported.');
 };
 
 //Set the route
@@ -98,15 +99,15 @@ function router() {
     renderTaskList();
     if (taskList.length === 0) {                        //List is empty        
         renderWithoutTasks();
-        document.title = 'Ninguna tarea creada. Crea una nueva tarea.';
+        document.title = txtkey_docTitleNoTasks;
     } else {                                            //List is not empty
         if(typeof(activeTask) === 'undefined') {        //No active task
             renderWelcome();
-            document.title = 'Selecciona o crea una tarea.';
+            document.title = txtkey_docTitleSelectTask;
         } else {                                        //Active task exists
             renderTask();
-            document.title = activeTask.title !== '' ? activeTask.title : 'Tarea sin título';
-        };        
+            document.title = activeTask.title !== '' ? activeTask.title : txtkey_docTitleUntitledTask;
+        };
     };
 };
 
@@ -127,7 +128,7 @@ function saveTask() {
     let description = document.getElementById('description').value;
     activeTask.getDataFrom(main,title,date,description);
     taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)] = Object.assign({...activeTask});
-    if(activeTask.isExpired) { alert('La fecha límite de la tarea es anterior a la actual, aparecerá como caducada.'); };
+    if(activeTask.isExpired) { alert(txtkey_taskIsExpired); };
     localStorage.setItem('taskList',JSON.stringify(taskList));    
 };
 
@@ -160,8 +161,8 @@ function toggleCompleted() {
 
 //Delete single task
 function deleteSingleTask() {    
-    let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
-    if (confirm(`¿Eliminar ${taskName}?`)) {
+    let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+    if (confirm(`${txtkey_delete} ${taskName}?`)) {
         taskList.splice(taskList.indexOf(taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)]),1);
         localStorage.setItem('taskList',JSON.stringify(taskList));
         delete activeTask;
@@ -171,7 +172,7 @@ function deleteSingleTask() {
 
 //Delete multiple tasks
 function deleteMultipleTasks() {    
-    if (confirm(`¿Eliminar las tareas seleccionadas?`)) {
+    if (confirm(txtkey_deleteSelected)) {
         let newTaskList = [];
         //Check if task is checked
         function isChecked(task) {
@@ -198,10 +199,20 @@ function deleteMultipleTasks() {
 };
 
 //Set listeners on headers's buttons
-btnNew.addEventListener('click', () => {    
+btnNew.addEventListener('click', () => {
     if (unsavedChanges()) {
-        let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
-        if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
+        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+        if(confirm(`${txtkey_save} ${taskName}?`)) {
+            saveTask();
+        };
+    };
+    newTask();
+    hideSidebar();
+});
+btnTaskNew.addEventListener('click', () => {
+    if (unsavedChanges()) {
+        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+        if(confirm(`${txtkey_save} ${taskName}?`)) {
             saveTask();
         };
     };
@@ -216,69 +227,76 @@ btnDeleteBulk.addEventListener('click', () => { deleteMultipleTasks(); });
 
 //Render tasklist
 function renderTaskList() {
-    let newList = document.createElement('div');
-    
-    taskList.forEach(task => {
-        task = Object.assign(new Task, {...task});
-
-        //Render elements
-        let listElementTpl = taskElementTpl.content.cloneNode(true);
-        let listElement =  listElementTpl.querySelector('.tasklist-element');
-        let listElementTitle = listElementTpl.querySelector('.title');
-        let listElementDate = listElementTpl.querySelector('.date');
+    if (taskList.length === 0) {
+        let newList = document.createElement('div');
+        HTMLTaskList.innerHTML = newList.innerHTML;
+        hideSidebar();
+    } else {
+        let newList = document.createElement('div');
         
-        task.putDataTo(listElement,listElementTitle,listElementDate);
-        listElement.setAttribute('title',task.title);
-        listElementTitle.innerHTML = task.title === '' ? 'Tarea sin título' : task.title;
+        taskList.forEach(task => {
+            task = Object.assign(new Task, {...task});
 
-        newList.appendChild(listElementTpl);
-    });    
-    HTMLTaskList.innerHTML = newList.innerHTML;
+            //Render elements
+            let listElementTpl = taskElementTpl.content.cloneNode(true);
+            let listElement =  listElementTpl.querySelector('.tasklist-element');
+            let listElementTitle = listElementTpl.querySelector('.title');
+            let listElementDate = listElementTpl.querySelector('.date');
+            
+            task.putDataTo(listElement,listElementTitle,listElementDate);
+            listElement.setAttribute('title',task.title);
+            listElementTitle.innerHTML = task.title === '' ? txtkey_untitledTask : task.title;
 
-    //Set listeners    
-    let HTMLTasks = document.querySelectorAll('.tasklist-element');
-    HTMLTasks.forEach(HTMLTask => {       
-        //Search selected task 
-        HTMLTask.classList.remove('selected');
-        if(typeof(activeTask) !== 'undefined' && HTMLTask.getAttribute('date-id') === activeTask.creationDate) {
-            HTMLTask.classList.add('selected');
-        };
-        //Checkbox listener
-        let listElementCheckbox = HTMLTask.querySelector('.task-checkbox');
-        listElementCheckbox.addEventListener('change', () => {
-            if(listElementCheckbox.checked) {
-                checkedTasks.push(HTMLTask.getAttribute('date-id'));
-            } else {
-                checkedTasks.pop(HTMLTask.getAttribute('task-id'));
+            newList.appendChild(listElementTpl);
+        });    
+        HTMLTaskList.innerHTML = newList.innerHTML;
+
+        //Set listeners    
+        let HTMLTasks = document.querySelectorAll('.tasklist-element');
+        HTMLTasks.forEach(HTMLTask => {       
+            //Search selected task 
+            HTMLTask.classList.remove('selected');
+            if(typeof(activeTask) !== 'undefined' && HTMLTask.getAttribute('date-id') === activeTask.creationDate) {
+                HTMLTask.classList.add('selected');
             };
-            if(checkedTasks.length === 0) {
-                sidebar.removeAttribute('checked');
-            } else {
-                sidebar.setAttribute('checked','');
-            };
-        });
-        //Select task listener
-        HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
-            if (!HTMLTask.classList.contains('selected')) {
-                if (unsavedChanges()) {
-                    let taskName = activeTask.title === '' ? 'Tarea sin título' : activeTask.title;
-                    if(confirm(`¿Deseas guardar los cambios realizados en ${taskName}?`)) {
-                        saveTask();
+            //Checkbox listener
+            let listElementCheckbox = HTMLTask.querySelector('.task-checkbox');
+            listElementCheckbox.addEventListener('change', () => {
+                if(listElementCheckbox.checked) {
+                    checkedTasks.push(HTMLTask.getAttribute('date-id'));
+                } else {
+                    checkedTasks.pop(HTMLTask.getAttribute('task-id'));
+                };
+                if(checkedTasks.length === 0) {
+                    sidebar.removeAttribute('checked');
+                } else {
+                    sidebar.setAttribute('checked','');
+                };
+            });
+            //Select task listener
+            HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
+                if (!HTMLTask.classList.contains('selected')) {
+                    if (unsavedChanges()) {
+                        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+                        if(confirm(`${txtkey_save} ${taskName}?`)) {
+                            saveTask();
+                            selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
+                            activeTask = Object.assign(new Task, {...selectedTask});
+                            renderTaskList();
+                        };
+                    } else {
                         selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
                         activeTask = Object.assign(new Task, {...selectedTask});
-                        renderTaskList();
+                        HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
+                        HTMLTask.classList.add('selected');
                     };
-                } else {
-                    selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
-                    activeTask = Object.assign(new Task, {...selectedTask});
-                    HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
-                    HTMLTask.classList.add('selected');
+                    renderTask();
                 };
-                renderTask();
-            };
-            mobilejsHideSidebarOnClick(HTMLTask);
+            });
+            mobilejsHideSidebarOnClick(HTMLTask.querySelector('.task-selectable'));
         });
-    });
+    };
+    translateDom(lang);
 };
 
 //Render task
@@ -294,7 +312,7 @@ function renderTask() {
     let dateText = document.getElementById('date-picker-text');
 
     activeTask.putDataTo(main,title,date,description);
-    dateText.innerHTML = activeTask.date === '' ? 'Sin fecha' : activeTask.date;
+    dateText.innerHTML = activeTask.date === '' ? txtkey_undated : activeTask.date;
 
     //Title & Description auto-resize
     resizeTextArea();
@@ -310,7 +328,7 @@ function renderTask() {
 
     //Date text on change listener    
     date.addEventListener('change', () => {
-        dateText.innerHTML = date.value === '' ? 'Sin fecha' : date.value;        
+        dateText.innerHTML = date.value === '' ? txtkey_undated : date.value;
         let currentDate = new Date();
         let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
         let taskIsoDate = parseInt(dateText.innerHTML.replace(/-/g,''))
@@ -330,6 +348,12 @@ function renderTask() {
             renderTaskList();
         };
     });
+    translateDom(lang);
+
+    //Set task status mobile buttons listeners
+    document.getElementById('task-active-mobile').addEventListener('click', () => { toggleActive(); });
+    document.getElementById('task-important-mobile').addEventListener('click', () => { toggleImportant(); });
+    document.getElementById('task-completed-mobile').addEventListener('click', () => { toggleCompleted(); });
 };
 
 //Render 'without tasks' screen and set listeners
@@ -343,6 +367,7 @@ function renderWithoutTasks() {
             newTask();
         });
     });
+    translateDom(lang);
 };
 
 //Render 'welcome' screen and set listeners
@@ -356,6 +381,7 @@ function renderWelcome() {
             newTask();
         });
     });
+    translateDom(lang);
 };
 
 //Check for unsaved changes

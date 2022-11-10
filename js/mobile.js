@@ -1,26 +1,26 @@
-const showSidebar = document.getElementById('mobile-show-sidebar');
-const hideSidebar = document.getElementById('mobile-hide-sidebar');
+const showSidebarBtn = document.getElementById('mobile-show-sidebar');
+const hideSidebarBtn = document.getElementById('mobile-hide-sidebar');
 const body = document.body;
 
+//Button listeners
+showSidebarBtn.addEventListener('click', () => { showSidebar(); });
+hideSidebarBtn.addEventListener('click', () => { hideSidebar(); });
 
 /*Show Sidebar Action*/
-showSidebar.addEventListener('click', () => {
+function showSidebar() {
     if(!body.classList.contains('sidebar-visible')) {
         body.classList.add('sidebar-visible');
     };
-});
+};
 
-/*Hide Sidebar Action*/
-hideSidebar.addEventListener('click', () => {
+/*Hide Sidebar Actions*/
+function hideSidebar() {
     if(body.classList.contains('sidebar-visible')) {
         body.classList.remove('sidebar-visible');
     };
-});
-
+};
 function mobilejsHideSidebarOnClick(element) {    
     element.addEventListener('click', () => {
-        if(body.classList.contains('sidebar-visible')) {
-            body.classList.remove('sidebar-visible');
-        };
-    })
-}
+        hideSidebar();
+    });
+};
