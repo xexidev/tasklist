@@ -2,23 +2,27 @@
 domText = {
 
     en : {
-        dateLimit: 'Deadline: ',
         noDate: 'Undated',
         noTasks: 'You have no tasks',
         addFirstTask: 'Add your first task.',
         newTask: 'New task',
         activeTasks: 'You have active tasks',
-        selectOrCreateTask: 'Select a task from the list or create a new one.'
+        selectOrCreateTask: 'Select a task from the list or create a new one.',
+        taskTitleLabel: 'Task title',
+        taskDateLabel: 'Deadline: ',
+        taskDescriptionLabel: 'Task description'
     },
 
     es : {
-        dateLimit: 'Límite: ',
         noDate: 'Sin fecha',
         noTasks: '¡Sin tareas!',
         addFirstTask: 'Añade tu primera tarea.',
         newTask: 'Nueva tarea',
         activeTasks: 'Tienes tareas activas',
         selectOrCreateTask: 'Selecciona una tarea de la lista o crea una nueva.',
+        taskTitleLabel: 'Título de la tarea',
+        taskDateLabel: 'Límite: ',
+        taskDescriptionLabel: 'Descripción de la tarea'
     }
 
 };
@@ -27,12 +31,12 @@ domText = {
 domPh = {
 
     en : {
-        untitledTask: 'Untitled task',
+        taskTitle: 'Task title',
         taskDescription: 'Task description'
     },
 
     es : {
-        untitledTask: 'Tarea sin título',
+        taskTitle: 'Nombre de la tarea',
         taskDescription: 'Descripción de la tarea'
     }
 
@@ -42,9 +46,23 @@ domPh = {
 domAria = {
 
     en : {
+        taskBarMenu: 'Task list Menu',
+        taskBarList: 'List of tasks',
+        taskMenu: 'Active task menu',
+        taskArea: 'Active task area',
+        taskAreaTitle: 'Active task title',
+        taskAreaDate: 'Active task deadline',
+        taskAreaDescription: 'Active task description'
     },
 
     es : {
+        taskBarMenu: 'Menú de la lista de tareas',
+        taskBarList: 'Listado de tareas',
+        taskMenu: 'Menú de la tarea activa',
+        taskArea: 'Área de la tarea activa',
+        taskAreaTitle: 'Título de la tarea activa',
+        taskAreaDate: 'Fecha límite de la tarea activa',
+        taskAreaDescription: 'Descripción de la tarea activa'
     }
 
 };
@@ -55,10 +73,11 @@ domTitle = {
     en : {
         newTaskBtn: 'Create new task',
         deleteTasksBtn: 'Delete selected tasks',
+        showSidebar: 'Show task list',
         saveTaskBtn: 'Save task',
         activeTaskBtn: 'Toggle active task',
-        importantTaskBtn: 'Toggle important task',
-        completedTaskBtn : 'Toggle completed task',
+        importantTaskBtn: 'Toggle important',
+        completedTaskBtn : 'Toggle completed',
         deleteTaskBtn: 'Delete current task',
         languageSelectBtn: 'Select language',
         languageSelectEnBtn: 'Select English language',
@@ -68,10 +87,11 @@ domTitle = {
     es : {
         newTaskBtn: 'Crear nueva tarea',
         deleteTasksBtn: 'Eliminar tareas seleccionadas',
+        showSidebar: 'Mostrar listado de tareas',
         saveTaskBtn: 'Guardar tarea',
         activeTaskBtn: 'Activar o desactivar tarea',
-        importantTaskBtn: 'Activar o desactivar tarea importante',
-        completedTaskBtn : 'Activar o desactivar tarea completada',
+        importantTaskBtn: 'Tarea importante',
+        completedTaskBtn : 'Tarea completada',
         deleteTaskBtn: 'Eliminar tarea actual',
         languageSelectBtn: 'Seleccionar idioma',
         languageSelectEnBtn: 'Select English language',
@@ -92,7 +112,7 @@ jsText = {
         txtkey_untitledTask = 'Untitled task';
         txtkey_delete = 'Delete';
         txtkey_deleteSelected = 'Delete selected tasks?';
-        txtkey_save = 'Save the changes made to';
+        txtkey_save = 'Save changes made to';
         txtkey_undated = 'Undated';
     },
     

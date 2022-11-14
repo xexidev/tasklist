@@ -1,6 +1,7 @@
 const displayHolder = document.getElementById('display-holder');
 const main = document.getElementById('main');
 const sidebar = document.getElementById('sidebar');
+const HTMLTaskList = document.getElementById('tasklist');
 
 const taskElementTpl = document.getElementById('tasklist-element-template');
 
@@ -24,9 +25,9 @@ const btnDeleteSingle = document.getElementById('task-delete');
 const btnDeleteBulk = document.getElementById('list-delete-bulk');
 const btnNew = document.getElementById('list-new');
 const btnTaskNew = document.getElementById('task-new');
-const taskBtns = [btnSave,btnActive,btnImportant,btnCompleted,btnDeleteSingle];
 
-const HTMLTaskList = document.getElementById('tasklist');
+const taskListBtns = [btnDeleteBulk];
+const taskBtns = [btnSave,btnActive,btnImportant,btnCompleted,btnDeleteSingle];
 
 let checkedTasks = [];
 
@@ -48,9 +49,9 @@ class Task {
         this.isActive = true;
     };
     getDataFrom(container,title,date,description) {
-        this.title = title;
+        this.title = encodeURIComponent(title);
         this.date = date;
-        this.description = description;
+        this.description = encodeURIComponent(description);
         this.modificationDate = new Date().toISOString();
         this.checkIfExpired(this.date);
         this.isImportant = container.hasAttribute("important") ? true : false;
@@ -65,14 +66,19 @@ class Task {
         container.removeAttribute("completed");
         container.removeAttribute("active");
         //Set attributes
-        if(this.isImportant) { container.setAttribute("important",""); };
-        if(this.isCompleted) { container.setAttribute("completed",""); };
-        if(this.isExpired) { container.setAttribute("expired",""); };
-        if(this.isActive) { container.setAttribute("active",""); };
+        if(this.isImportant) { container.toggleAttribute("important"); };
+        if(this.isCompleted) { container.toggleAttribute("completed"); };
+        if(this.isExpired) { container.toggleAttribute("expired"); };
+        if(this.isActive) { container.toggleAttribute("active"); };
         container.setAttribute('date-id',this.creationDate); //Not in use
-        if(title) { title.innerHTML = title.value = this.title; };
-        if(date) { date.innerHTML = date.value = this.date; };
-        if(description) { description.innerHTML = description.value = this.description; };
+        if(title) { title.innerHTML = title.value = decodeURIComponent(this.title) };
+        if(date) {
+            date.innerHTML = date.value = this.date;
+            if (this.date === '') {
+                date.innerHTML = txtkey_undated;
+            };
+        };
+        if(description) { description.innerHTML = description.value = decodeURIComponent(this.description) };
     };
     checkIfExpired(date) {
         let currentDate = new Date();
@@ -99,15 +105,14 @@ function router() {
     renderTaskList();
     if (taskList.length === 0) {                        //List is empty        
         renderWithoutTasks();
-        document.title = txtkey_docTitleNoTasks;
+        displayHolder.focus();
     } else {                                            //List is not empty
         if(typeof(activeTask) === 'undefined') {        //No active task
             renderWelcome();
-            document.title = txtkey_docTitleSelectTask;
         } else {                                        //Active task exists
             renderTask();
-            document.title = activeTask.title !== '' ? activeTask.title : txtkey_docTitleUntitledTask;
         };
+        HTMLTaskList.focus();
     };
 };
 
@@ -119,6 +124,7 @@ function newTask() {
     localStorage.setItem('taskList',JSON.stringify(taskList));
     renderTaskList();
     renderTask();
+    document.getElementById('title').focus();
 };
 
 //Save task
@@ -129,44 +135,34 @@ function saveTask() {
     activeTask.getDataFrom(main,title,date,description);
     taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)] = Object.assign({...activeTask});
     if(activeTask.isExpired) { alert(txtkey_taskIsExpired); };
-    localStorage.setItem('taskList',JSON.stringify(taskList));    
+    localStorage.setItem('taskList',JSON.stringify(taskList))
+    HTMLTaskList.focus();
 };
 
 //Set task as active
 function toggleActive() {
-    if(main.hasAttribute("active")) {
-        main.removeAttribute("active");
-    } else {
-        main.setAttribute("active","");
-    };
+    main.toggleAttribute("active");
 };
 
 //Set task as important
 function toggleImportant() {
-    if(main.hasAttribute("important")) {
-        main.removeAttribute("important");
-    } else {
-        main.setAttribute("important","");
-    };
+    main.toggleAttribute("important");
 };
 
 //Set task as completed
 function toggleCompleted() {
-    if(main.hasAttribute("completed")) {
-        main.removeAttribute("completed");
-    } else {
-        main.setAttribute("completed","");
-    };
+    main.toggleAttribute("completed");
 };
 
 //Delete single task
 function deleteSingleTask() {    
-    let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+    let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
     if (confirm(`${txtkey_delete} ${taskName}?`)) {
         taskList.splice(taskList.indexOf(taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)]),1);
         localStorage.setItem('taskList',JSON.stringify(taskList));
         delete activeTask;
         router();
+        HTMLTaskList.focus();
     };
 };
 
@@ -195,13 +191,14 @@ function deleteMultipleTasks() {
         localStorage.setItem('taskList',JSON.stringify(taskList));
         delete activeTask;
         router();
+        HTMLTaskList.focus();
     };
 };
 
 //Set listeners on headers's buttons
 btnNew.addEventListener('click', () => {
     if (unsavedChanges()) {
-        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+        let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
         if(confirm(`${txtkey_save} ${taskName}?`)) {
             saveTask();
         };
@@ -211,19 +208,35 @@ btnNew.addEventListener('click', () => {
 });
 btnTaskNew.addEventListener('click', () => {
     if (unsavedChanges()) {
-        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+        let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
         if(confirm(`${txtkey_save} ${taskName}?`)) {
             saveTask();
         };
     };
     newTask();
 });
-btnSave.addEventListener('click', () => { saveTask(); renderTaskList(); });
-btnActive.addEventListener('click', () => { toggleActive(); });
-btnImportant.addEventListener('click', () => { toggleImportant(); });
-btnCompleted.addEventListener('click', () => { toggleCompleted(); });
-btnDeleteSingle.addEventListener('click', () => { deleteSingleTask(); });
-btnDeleteBulk.addEventListener('click', () => { deleteMultipleTasks(); });
+btnSave.addEventListener('click', () => {
+    saveTask();
+    renderTaskList();
+});
+btnActive.addEventListener('click', () => {
+    toggleActive();
+    toggleChecked(btnActive);
+});
+btnImportant.addEventListener('click', () => {
+    toggleImportant();
+    toggleChecked(btnImportant);
+});
+btnCompleted.addEventListener('click', () => {
+    toggleCompleted();
+    toggleChecked(btnCompleted);
+});
+btnDeleteSingle.addEventListener('click', () => {
+    deleteSingleTask();
+});
+btnDeleteBulk.addEventListener('click', () => {
+    deleteMultipleTasks();
+});
 
 //Render tasklist
 function renderTaskList() {
@@ -234,18 +247,30 @@ function renderTaskList() {
     } else {
         let newList = document.createElement('div');
         
+        let tabIndex = 3001;
         taskList.forEach(task => {
             task = Object.assign(new Task, {...task});
 
             //Render elements
             let listElementTpl = taskElementTpl.content.cloneNode(true);
             let listElement =  listElementTpl.querySelector('.tasklist-element');
+            let listElementCheckbox = listElementTpl.querySelector('.task-checkbox');
+            let listElementSelectable = listElementTpl.querySelector('.task-selectable');
             let listElementTitle = listElementTpl.querySelector('.title');
             let listElementDate = listElementTpl.querySelector('.date');
             
             task.putDataTo(listElement,listElementTitle,listElementDate);
-            listElement.setAttribute('title',task.title);
-            listElementTitle.innerHTML = task.title === '' ? txtkey_untitledTask : task.title;
+            let titleToPut = task.title === '' ? txtkey_untitledTask : decodeURIComponent(task.title);
+            listElement.setAttribute('title',`Task name: ${titleToPut}`);
+            listElementTitle.innerHTML = titleToPut;
+            if (listElementDate.innerHTML === txtkey_undated) { listElementDate.innerHTML = ''};
+
+            listElement.setAttribute('tabindex',tabIndex);
+            tabIndex++;
+            listElementCheckbox.setAttribute('tabindex',tabIndex);
+            tabIndex++;
+            listElementSelectable.setAttribute('tabindex',tabIndex);
+            tabIndex++;
 
             newList.appendChild(listElementTpl);
         });    
@@ -268,16 +293,21 @@ function renderTaskList() {
                     checkedTasks.pop(HTMLTask.getAttribute('task-id'));
                 };
                 if(checkedTasks.length === 0) {
-                    sidebar.removeAttribute('checked');
+                    unsetButtons(taskListBtns);
                 } else {
-                    sidebar.setAttribute('checked','');
+                    setButtons(taskListBtns);
                 };
             });
+            if(checkedTasks.length === 0) {
+                unsetButtons(taskListBtns);
+            } else {
+                setButtons(taskListBtns);
+            };
             //Select task listener
             HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
                 if (!HTMLTask.classList.contains('selected')) {
                     if (unsavedChanges()) {
-                        let taskName = activeTask.title === '' ? txtkey_untitledTask : activeTask.title;
+                        let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
                         if(confirm(`${txtkey_save} ${taskName}?`)) {
                             saveTask();
                             selectedTask = taskList[taskList.findIndex(task => task.creationDate === HTMLTask.getAttribute('date-id'))];
@@ -290,8 +320,9 @@ function renderTaskList() {
                         HTMLTasks.forEach(HTMLTask => { HTMLTask.classList.remove('selected'); });
                         HTMLTask.classList.add('selected');
                     };
-                    renderTask();
+                    renderTask();                    
                 };
+                document.getElementById('form').focus();
             });
             mobilejsHideSidebarOnClick(HTMLTask.querySelector('.task-selectable'));
         });
@@ -349,11 +380,24 @@ function renderTask() {
         };
     });
     translateDom(lang);
+    
+    //Focus on Save Task Button on Tab on Description text
+    description.addEventListener('keydown', (e) => {
+        if(e.code === 'Tab') {
+            e.preventDefault();
+            btnSave.focus();
+        };
+    });
 
     //Set task status mobile buttons listeners
-    document.getElementById('task-active-mobile').addEventListener('click', () => { toggleActive(); });
-    document.getElementById('task-important-mobile').addEventListener('click', () => { toggleImportant(); });
-    document.getElementById('task-completed-mobile').addEventListener('click', () => { toggleCompleted(); });
+    let btnActiveMobile = document.getElementById('task-active-mobile');
+    let btnImportantMobile = document.getElementById('task-important-mobile');
+    let btnCompletedMobile = document.getElementById('task-completed-mobile');
+    btnActiveMobile.addEventListener('click', () => { toggleChecked(btnActiveMobile); toggleActive(); });
+    btnImportantMobile.addEventListener('click', () => { toggleChecked(btnImportantMobile); toggleImportant(); });
+    btnCompletedMobile.addEventListener('click', () => { toggleChecked(btnCompletedMobile); toggleCompleted(); });
+    
+    document.title = activeTask.title !== '' ? decodeURIComponent(activeTask.title) : txtkey_docTitleUntitledTask;
 };
 
 //Render 'without tasks' screen and set listeners
@@ -368,6 +412,7 @@ function renderWithoutTasks() {
         });
     });
     translateDom(lang);
+    document.title = `Xexi Tasklist: ${txtkey_docTitleNoTasks}`;
 };
 
 //Render 'welcome' screen and set listeners
@@ -382,6 +427,7 @@ function renderWelcome() {
         });
     });
     translateDom(lang);
+    document.title = `Xexi Tasklist: ${txtkey_docTitleSelectTask}`;
 };
 
 //Check for unsaved changes
@@ -390,9 +436,9 @@ unsavedChanges = () => {
         let titleInDisplay = document.getElementById('title').value;
         let dateInDisplay = document.getElementById('date').value;
         let descriptionInDisplay = document.getElementById('description').value;
-        if(activeTask.title !== titleInDisplay || 
+        if(decodeURIComponent(activeTask.title) !== titleInDisplay || 
             activeTask.date !== dateInDisplay || 
-            activeTask.description !== descriptionInDisplay || 
+            decodeURIComponent(activeTask.description) !== descriptionInDisplay || 
             (!activeTask.isImportant && main.hasAttribute("important")) ||
             (activeTask.isImportant && !main.hasAttribute("important")) || 
             (!activeTask.isCompleted && main.hasAttribute("completed")) ||
@@ -409,16 +455,22 @@ unsavedChanges = () => {
 //Set / Unset buttons
 function unsetButtons(btnArray) {
     btnArray.forEach(btn => {
-        if(btn.classList.contains('inactive')) {
-        } else {
-            btn.classList.add('inactive');
-        };
+        btn.setAttribute('disabled','');
+        btn.setAttribute('aria-disabled','true');
     });
 };
 function setButtons(btnArray) {
     btnArray.forEach(btn => {
-        if(btn.classList.contains('inactive')) {
-            btn.classList.remove('inactive');
-        };
+        btn.removeAttribute('disabled','');
+        btn.setAttribute('aria-disabled','false');
     });
+};
+
+//Toggle 'aria checked' on buttons
+function toggleChecked(btn) {
+    if (btn.getAttribute('aria-checked') === 'true') {
+        btn.setAttribute('aria-checked','false');
+    } else {
+        btn.setAttribute('aria-checked','true');
+    };
 };

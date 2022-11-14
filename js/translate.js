@@ -69,9 +69,21 @@ enBtn.addEventListener('click', () => {
     enBtn.classList.add('selected');
 });
 
-//Translate DOM
+//Translate JS
+translateJs(lang);
+function translateJs(language) {
+    if (language === 'es') {
+        jsText.es();
+    };
+    if (language === 'en') {
+        jsText.en();
+    };
+};
+
+//Translate DOM (Call this function after render)
 function translateDom(language) {
     const allDom = Array.from(document.getElementsByTagName('*'));
+
     allDom.forEach(node => {
         if (language === 'es') {            
             //Texts
@@ -98,6 +110,7 @@ function translateDom(language) {
                     node.setAttribute('title',domTitle.es[property]);
                 };
             });
+
             //Translate button
             languageText.innerHTML = 'Español';
             esBtn.classList.add('selected');
@@ -132,15 +145,23 @@ function translateDom(language) {
             enBtn.classList.add('selected');
         };
     });
-};
 
-//Translate JS
-translateJs(lang);
-function translateJs(language) {
-    if (language === 'es') {
-        jsText.es();
-    };
-    if (language === 'en') {
-        jsText.en();
-    };
+    //Set date format
+    const listDate = Array.from(document.getElementsByClassName('date'));
+    const taskDate = document.getElementById('date-picker-text');
+    const dateArray = [taskDate,...listDate];
+    
+    dateArray.forEach(date => {
+        if(date) {
+            let firstData = date.innerHTML.split('-')[0].length;
+            if (language === 'es' && firstData > 2 && firstData !== 0) {
+                let newDate = date.innerHTML.split('-').reverse().join('-');
+                date.innerHTML = newDate;
+            };
+            if (language === 'en' && firstData < 4 && firstData !== 0) {
+                let newDate = date.innerHTML.split('-').reverse().join('-');
+                date.innerHTML = newDate;
+            };
+        };
+    });
 };
