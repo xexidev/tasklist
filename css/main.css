@@ -85,7 +85,7 @@ button[disabled] {
 #sidebar {
     flex-basis: var(--sidebar-width);
     width: var(--sidebar-width);
-    height: calc(100vh - var(--footer-height));
+    min-height: calc(100vh - var(--footer-height));
     background-color: #fff;
 }
 #main {
@@ -342,15 +342,16 @@ button[disabled] {
     box-shadow: 0px 0px 9px -7px #000;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
 }
 #language-list.hidden {
     visibility: hidden;
     opacity: 0;
+    transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
 }
 #language-list.visible {
     visibility: visible;
     opacity: 1;
+    transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
 }
 #language-list li {
     padding: 6px 10px;

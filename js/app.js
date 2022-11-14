@@ -24,7 +24,7 @@ const btnCompleted = document.getElementById('task-completed');
 const btnDeleteSingle = document.getElementById('task-delete');
 const btnDeleteBulk = document.getElementById('list-delete-bulk');
 const btnNew = document.getElementById('list-new');
-const btnTaskNew = document.getElementById('task-new');
+const btnNewMobile = document.getElementById('task-new');
 
 const taskListBtns = [btnDeleteBulk];
 const taskBtns = [btnSave,btnActive,btnImportant,btnCompleted,btnDeleteSingle];
@@ -66,11 +66,11 @@ class Task {
         container.removeAttribute("completed");
         container.removeAttribute("active");
         //Set attributes
+        container.setAttribute('date-id',this.creationDate);
         if(this.isImportant) { container.toggleAttribute("important"); };
         if(this.isCompleted) { container.toggleAttribute("completed"); };
         if(this.isExpired) { container.toggleAttribute("expired"); };
         if(this.isActive) { container.toggleAttribute("active"); };
-        container.setAttribute('date-id',this.creationDate); //Not in use
         if(title) { title.innerHTML = title.value = decodeURIComponent(this.title) };
         if(date) {
             date.innerHTML = date.value = this.date;
@@ -93,15 +93,15 @@ class Task {
 };
 
 //Check localStorage and start
-if (typeof(Storage) !== 'undefined') {
-    router();
-} else {
+if (typeof(Storage) === 'undefined') {
     alert(txtkey_localStorageError)
     throw new Error('LocalStorage not supported.');
+} else {
+    app();
 };
 
 //Set the route
-function router() {
+function app() {
     renderTaskList();
     if (taskList.length === 0) {                        //List is empty        
         renderWithoutTasks();
@@ -118,13 +118,11 @@ function router() {
 
 //New task
 function newTask() {    
+    checkedTasks = [];
     let currentDate = new Date().toISOString();
     activeTask = new Task('','','',currentDate);
     taskList.unshift(activeTask);
     localStorage.setItem('taskList',JSON.stringify(taskList));
-    renderTaskList();
-    renderTask();
-    document.getElementById('title').focus();
 };
 
 //Save task
@@ -139,21 +137,6 @@ function saveTask() {
     HTMLTaskList.focus();
 };
 
-//Set task as active
-function toggleActive() {
-    main.toggleAttribute("active");
-};
-
-//Set task as important
-function toggleImportant() {
-    main.toggleAttribute("important");
-};
-
-//Set task as completed
-function toggleCompleted() {
-    main.toggleAttribute("completed");
-};
-
 //Delete single task
 function deleteSingleTask() {    
     let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
@@ -161,8 +144,6 @@ function deleteSingleTask() {
         taskList.splice(taskList.indexOf(taskList[taskList.findIndex(task => task.creationDate === activeTask.creationDate)]),1);
         localStorage.setItem('taskList',JSON.stringify(taskList));
         delete activeTask;
-        router();
-        HTMLTaskList.focus();
     };
 };
 
@@ -187,11 +168,8 @@ function deleteMultipleTasks() {
         });
         taskList = newTaskList;
         checkedTasks = [];
-        sidebar.removeAttribute('checked');
         localStorage.setItem('taskList',JSON.stringify(taskList));
         delete activeTask;
-        router();
-        HTMLTaskList.focus();
     };
 };
 
@@ -203,10 +181,13 @@ btnNew.addEventListener('click', () => {
             saveTask();
         };
     };
-    newTask();
+    newTask();    
+    renderTaskList();
+    renderTask();
+    document.getElementById('title').focus();
     hideSidebar();
 });
-btnTaskNew.addEventListener('click', () => {
+btnNewMobile.addEventListener('click', () => {
     if (unsavedChanges()) {
         let taskName = activeTask.title === '' ? txtkey_untitledTask : decodeURIComponent(activeTask.title);
         if(confirm(`${txtkey_save} ${taskName}?`)) {
@@ -214,28 +195,37 @@ btnTaskNew.addEventListener('click', () => {
         };
     };
     newTask();
+    renderTaskList();
+    renderTask();
+    document.getElementById('title').focus();
 });
 btnSave.addEventListener('click', () => {
     saveTask();
     renderTaskList();
 });
 btnActive.addEventListener('click', () => {
-    toggleActive();
+    main.toggleAttribute("active");
     toggleChecked(btnActive);
 });
 btnImportant.addEventListener('click', () => {
-    toggleImportant();
+    main.toggleAttribute("important");
     toggleChecked(btnImportant);
 });
 btnCompleted.addEventListener('click', () => {
-    toggleCompleted();
+    main.toggleAttribute("completed");
     toggleChecked(btnCompleted);
 });
 btnDeleteSingle.addEventListener('click', () => {
     deleteSingleTask();
+    app();
+    window.scrollTo(0, 0);
+    HTMLTaskList.focus();
 });
 btnDeleteBulk.addEventListener('click', () => {
     deleteMultipleTasks();
+    app();
+    window.scrollTo(0, 0);
+    HTMLTaskList.focus();
 });
 
 //Render tasklist
@@ -393,9 +383,18 @@ function renderTask() {
     let btnActiveMobile = document.getElementById('task-active-mobile');
     let btnImportantMobile = document.getElementById('task-important-mobile');
     let btnCompletedMobile = document.getElementById('task-completed-mobile');
-    btnActiveMobile.addEventListener('click', () => { toggleChecked(btnActiveMobile); toggleActive(); });
-    btnImportantMobile.addEventListener('click', () => { toggleChecked(btnImportantMobile); toggleImportant(); });
-    btnCompletedMobile.addEventListener('click', () => { toggleChecked(btnCompletedMobile); toggleCompleted(); });
+    btnActiveMobile.addEventListener('click', () => {
+        main.toggleAttribute("active");
+        toggleChecked(btnActiveMobile);
+    });
+    btnImportantMobile.addEventListener('click', () => {
+        main.toggleAttribute("important");
+        toggleChecked(btnImportantMobile);
+    });
+    btnCompletedMobile.addEventListener('click', () => {
+        main.toggleAttribute("completed");
+        toggleChecked(btnCompletedMobile);
+    });
     
     document.title = activeTask.title !== '' ? decodeURIComponent(activeTask.title) : txtkey_docTitleUntitledTask;
 };
@@ -409,6 +408,9 @@ function renderWithoutTasks() {
     btnNewArray.forEach(btn => {
         btn.addEventListener('click', () => { 
             newTask();
+            renderTaskList();
+            renderTask();
+            document.getElementById('title').focus();
         });
     });
     translateDom(lang);
@@ -424,6 +426,9 @@ function renderWelcome() {
     btnNewArray.forEach(btn => {
         btn.addEventListener('click', () => { 
             newTask();
+            renderTaskList();
+            renderTask();
+            document.getElementById('title').focus();
         });
     });
     translateDom(lang);

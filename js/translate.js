@@ -26,6 +26,8 @@ languageBtn.addEventListener('click', () => {
     if (languageList.classList.contains('hidden')) {
         languageList.classList.remove('hidden');
         languageList.classList.add('visible');
+    } else {
+        languageList.classList.add('visible');
     };
 });
 
@@ -101,7 +103,7 @@ function translateDom(language) {
             //Aria Labels
             Object.getOwnPropertyNames(domAria.es).forEach(property => {
                 if (property === node.getAttribute('ariakey')) {
-                    node.setAttribute('placeholder',domAria.es[property]);
+                    node.setAttribute('aria-label',domAria.es[property]);
                 };
             });
             //Titles
@@ -131,7 +133,7 @@ function translateDom(language) {
             //Aria Labels
             Object.getOwnPropertyNames(domAria.en).forEach(property => {
                 if (property === node.getAttribute('ariakey')) {
-                    node.setAttribute('placeholder',domAria.en[property]);
+                    node.setAttribute('aria-label',domAria.en[property]);
                 };
             });
             //Titles

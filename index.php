@@ -194,7 +194,7 @@
                             </svg>
                             <span id="language-text">Select</span>
                         </div>
-                        <ul id="language-list" class="hidden">
+                        <ul id="language-list">
                             <li class="select-lang-btn" titlekey="languageSelectEnBtn" title="Select English language" id="enBtn">English</li>
                             <li class="select-lang-btn" titlekey="languageSelectEsBtn" title="Seleccionar idioma español" id="esBtn">Español</li>
                         </ul>
