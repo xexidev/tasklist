@@ -65,7 +65,7 @@
                 <div class="date-box" tabindex="5002" ariaKey="taskAreaDate" aria-label="Active Task Deadline">
                 <label for="date" txtkey="taskDateLabel">Deadline: </label>
                     <div class="date-picker">
-                        <div id="date-picker-text" aria-hidden="true">Undated</div>
+                        <div id="date-picker-text" aria-hidden="true"></div>
                         <input id="date" type="date" name="date" value="" tabindex="5003">
                     </div>
                 </div>

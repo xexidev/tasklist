@@ -10,7 +10,11 @@ domText = {
         selectOrCreateTask: 'Select a task from the list or create a new one.',
         taskTitleLabel: 'Task title',
         taskDateLabel: 'Deadline: ',
-        taskDescriptionLabel: 'Task description'
+        taskDescriptionLabel: 'Task description',
+        untitledTask: 'Untitled Task',
+        undated: 'Undated',
+        docTitleSelectTask: 'Select or create a new task',
+        docTitleNoTasks: 'No task created. Create a new task.'
     },
 
     es : {
@@ -22,7 +26,11 @@ domText = {
         selectOrCreateTask: 'Selecciona una tarea de la lista o crea una nueva.',
         taskTitleLabel: 'Título de la tarea',
         taskDateLabel: 'Límite: ',
-        taskDescriptionLabel: 'Descripción de la tarea'
+        taskDescriptionLabel: 'Descripción de la tarea',
+        untitledTask: 'Tarea sin título',
+        undated: 'Sin fecha',
+        docTitleSelectTask: 'Selecciona o crea una tarea',
+        docTitleNoTasks: 'Ninguna tarea creada. Crea una nueva tarea.'
     }
 
 };
@@ -81,7 +89,8 @@ domTitle = {
         deleteTaskBtn: 'Delete current task',
         languageSelectBtn: 'Select language',
         languageSelectEnBtn: 'Select English language',
-        languageSelectEsBtn: 'Seleccionar idioma español'
+        languageSelectEsBtn: 'Seleccionar idioma español',
+        untitledTask: 'Untitled Task'
     },
 
     es : {
@@ -95,7 +104,8 @@ domTitle = {
         deleteTaskBtn: 'Eliminar tarea actual',
         languageSelectBtn: 'Seleccionar idioma',
         languageSelectEnBtn: 'Select English language',
-        languageSelectEsBtn: 'Seleccionar idioma español'
+        languageSelectEsBtn: 'Seleccionar idioma español',
+        untitledTask: 'Tarea sin título'
     }
 
 };
@@ -105,28 +115,24 @@ jsText = {
 
     en : () => {     
         txtkey_localStorageError = 'Your browser does not support local data storage, the application will now stop.';
-        txtkey_docTitleNoTasks = 'No task created. Create a new task.';
-        txtkey_docTitleSelectTask = 'Select or create a new task';
-        txtkey_docTitleUntitledTask = 'Untitled task';
         txtkey_taskIsExpired = 'Task deadline is before the current date, task will be shown as expired.';
         txtkey_untitledTask = 'Untitled task';
         txtkey_delete = 'Delete';
         txtkey_deleteSelected = 'Delete selected tasks?';
         txtkey_save = 'Save changes made to';
         txtkey_undated = 'Undated';
+        txtkey_taskName = 'Title task: ';
     },
     
     es : () => {
         txtkey_localStorageError = 'Tu navegador no sporta el almacenamiento local de datos, la aplicación se detendrá.';
-        txtkey_docTitleNoTasks = 'Ninguna tarea creada. Crea una nueva tarea.';
-        txtkey_docTitleSelectTask = 'Selecciona o crea una tarea';
-        txtkey_docTitleUntitledTask = 'Tarea sin título';
         txtkey_taskIsExpired = 'La fecha límite de la tarea es anterior a la actual, aparecerá como caducada.';
         txtkey_untitledTask = 'Tarea sin título';
         txtkey_delete = '¿Eliminar';
         txtkey_deleteSelected = '¿Eliminar las tareas seleccionadas?';
         txtkey_save = '¿Deseas guardar los cambios realizados en';
         txtkey_undated = 'Sin fecha';
+        txtkey_taskName = 'Nombre de la tarea: ';
     }
 
 };

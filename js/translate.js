@@ -149,21 +149,30 @@ function translateDom(language) {
     });
 
     //Set date format
-    const listDate = Array.from(document.getElementsByClassName('date'));
+    const listDates = Array.from(document.getElementsByClassName('date'));
     const taskDate = document.getElementById('date-picker-text');
-    const dateArray = [taskDate,...listDate];
+    const dateArray = [taskDate,...listDates];
     
-    dateArray.forEach(date => {
-        if(date) {
-            let firstData = date.innerHTML.split('-')[0].length;
-            if (language === 'es' && firstData > 2 && firstData !== 0) {
-                let newDate = date.innerHTML.split('-').reverse().join('-');
-                date.innerHTML = newDate;
-            };
-            if (language === 'en' && firstData < 4 && firstData !== 0) {
-                let newDate = date.innerHTML.split('-').reverse().join('-');
-                date.innerHTML = newDate;
-            };
+    dateArray.forEach(element => {
+        if(element && element.innerHTML) {
+            let dateText = element.innerHTML;
+            element.innerHTML = getFormattedDate(dateText);
         };
     });
 };
+
+function getFormattedDate(date) {
+    let newDate;
+    if(date) {
+        let firstData = date.split('-')[0].length;
+        if (lang === 'es' && firstData > 2 && firstData !== 0) {
+            newDate = date.split('-').reverse().join('-');
+        } else
+        if (lang === 'en' && firstData <= 2 && firstData !== 0) {
+            newDate = date.split('-').reverse().join('-');        
+        } else {
+            newDate = date;
+        };
+    };
+    return newDate;
+}

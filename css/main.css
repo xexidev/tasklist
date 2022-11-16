@@ -370,10 +370,12 @@ button[disabled] {
 
 /*Task*/
 #task label {
-    visibility: hidden;
+    position: absolute;
+    z-index: -1;
 }
 #task label[for="date"] {
-    visibility: visible;
+    position: relative;
+    z-index: initial;
 }
 #title {
     font-weight: 300;

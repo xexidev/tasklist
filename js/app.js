@@ -72,12 +72,7 @@ class Task {
         if(this.isExpired) { container.toggleAttribute("expired"); };
         if(this.isActive) { container.toggleAttribute("active"); };
         if(title) { title.innerHTML = title.value = decodeURIComponent(this.title) };
-        if(date) {
-            date.innerHTML = date.value = this.date;
-            if (this.date === '') {
-                date.innerHTML = txtkey_undated;
-            };
-        };
+        if(date) { date.innerHTML = date.value = this.date; };
         if(description) { description.innerHTML = description.value = decodeURIComponent(this.description) };
     };
     checkIfExpired(date) {
@@ -106,6 +101,7 @@ function app() {
     if (taskList.length === 0) {                        //List is empty        
         renderWithoutTasks();
         displayHolder.focus();
+        window.scrollTo(0, 0);
     } else {                                            //List is not empty
         if(typeof(activeTask) === 'undefined') {        //No active task
             renderWelcome();
@@ -113,6 +109,7 @@ function app() {
             renderTask();
         };
         HTMLTaskList.focus();
+        window.scrollTo(0, 0);
     };
 };
 
@@ -135,6 +132,7 @@ function saveTask() {
     if(activeTask.isExpired) { alert(txtkey_taskIsExpired); };
     localStorage.setItem('taskList',JSON.stringify(taskList))
     HTMLTaskList.focus();
+    window.scrollTo(0, 0);
 };
 
 //Delete single task
@@ -185,6 +183,7 @@ btnNew.addEventListener('click', () => {
     renderTaskList();
     renderTask();
     document.getElementById('title').focus();
+    window.scrollTo(0, 0);
     hideSidebar();
 });
 btnNewMobile.addEventListener('click', () => {
@@ -198,6 +197,7 @@ btnNewMobile.addEventListener('click', () => {
     renderTaskList();
     renderTask();
     document.getElementById('title').focus();
+    window.scrollTo(0, 0);
 });
 btnSave.addEventListener('click', () => {
     saveTask();
@@ -218,14 +218,14 @@ btnCompleted.addEventListener('click', () => {
 btnDeleteSingle.addEventListener('click', () => {
     deleteSingleTask();
     app();
-    window.scrollTo(0, 0);
     HTMLTaskList.focus();
+    window.scrollTo(0, 0);
 });
 btnDeleteBulk.addEventListener('click', () => {
     deleteMultipleTasks();
     app();
-    window.scrollTo(0, 0);
     HTMLTaskList.focus();
+    window.scrollTo(0, 0);
 });
 
 //Render tasklist
@@ -250,10 +250,12 @@ function renderTaskList() {
             let listElementDate = listElementTpl.querySelector('.date');
             
             task.putDataTo(listElement,listElementTitle,listElementDate);
-            let titleToPut = task.title === '' ? txtkey_untitledTask : decodeURIComponent(task.title);
-            listElement.setAttribute('title',`Task name: ${titleToPut}`);
-            listElementTitle.innerHTML = titleToPut;
-            if (listElementDate.innerHTML === txtkey_undated) { listElementDate.innerHTML = ''};
+
+            if (listElementTitle.innerHTML === '') {
+                listElementTitle.setAttribute('txtkey','untitledTask');
+            } else {
+                listElement.setAttribute('titlekey','untitledTask');
+            };
 
             listElement.setAttribute('tabindex',tabIndex);
             tabIndex++;
@@ -313,6 +315,7 @@ function renderTaskList() {
                     renderTask();                    
                 };
                 document.getElementById('form').focus();
+                window.scrollTo(0, 0);
             });
             mobilejsHideSidebarOnClick(HTMLTask.querySelector('.task-selectable'));
         });
@@ -332,8 +335,13 @@ function renderTask() {
     let description = document.getElementById('description');
     let dateText = document.getElementById('date-picker-text');
 
-    activeTask.putDataTo(main,title,date,description);
-    dateText.innerHTML = activeTask.date === '' ? txtkey_undated : activeTask.date;
+    activeTask.putDataTo(main,title,date,description);    
+
+    if(activeTask.date === '') {
+        dateText.setAttribute('txtkey','undated');
+    } else {
+        dateText.innerHTML = getFormattedDate(activeTask.date);
+    };
 
     //Title & Description auto-resize
     resizeTextArea();
@@ -349,7 +357,13 @@ function renderTask() {
 
     //Date text on change listener    
     date.addEventListener('change', () => {
-        dateText.innerHTML = date.value === '' ? txtkey_undated : date.value;
+        if (date.value === '') {
+            dateText.setAttribute('txtkey','undated');
+            dateText.innerHTML = txtkey_undated;
+        } else {
+            dateText.innerHTML = getFormattedDate(date.value);
+            dateText.removeAttribute('txtkey');
+        };
         let currentDate = new Date();
         let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
         let taskIsoDate = parseInt(dateText.innerHTML.replace(/-/g,''))
@@ -369,13 +383,13 @@ function renderTask() {
             renderTaskList();
         };
     });
-    translateDom(lang);
     
     //Focus on Save Task Button on Tab on Description text
     description.addEventListener('keydown', (e) => {
         if(e.code === 'Tab') {
             e.preventDefault();
             btnSave.focus();
+            window.scrollTo(0, 0);
         };
     });
 
@@ -396,7 +410,15 @@ function renderTask() {
         toggleChecked(btnCompletedMobile);
     });
     
-    document.title = activeTask.title !== '' ? decodeURIComponent(activeTask.title) : txtkey_docTitleUntitledTask;
+    //Set document title
+    if (activeTask.title === '') {
+        document.getElementsByTagName("title")[0].setAttribute('txtkey','untitledTask');
+    } else {
+        document.getElementsByTagName("title")[0].removeAttribute('txtkey');
+        document.title = decodeURIComponent(activeTask.title);
+    };
+    
+    translateDom(lang);
 };
 
 //Render 'without tasks' screen and set listeners
@@ -411,10 +433,11 @@ function renderWithoutTasks() {
             renderTaskList();
             renderTask();
             document.getElementById('title').focus();
+            window.scrollTo(0, 0);
         });
     });
+    document.getElementsByTagName("title")[0].setAttribute('txtkey','docTitleNoTasks');
     translateDom(lang);
-    document.title = `Xexi Tasklist: ${txtkey_docTitleNoTasks}`;
 };
 
 //Render 'welcome' screen and set listeners
@@ -429,10 +452,11 @@ function renderWelcome() {
             renderTaskList();
             renderTask();
             document.getElementById('title').focus();
+            window.scrollTo(0, 0);
         });
     });
+    document.getElementsByTagName("title")[0].setAttribute('txtkey','docTitleSelectTask');
     translateDom(lang);
-    document.title = `Xexi Tasklist: ${txtkey_docTitleSelectTask}`;
 };
 
 //Check for unsaved changes
