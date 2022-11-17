@@ -63,6 +63,7 @@ body.sidebar-visible #main {
     z-index: 10;
     transition: ease-in-out;
     transition-duration: 300ms;
+    min-height: auto;
 }
 body.sidebar-visible #sidebar {
     left: 0px;

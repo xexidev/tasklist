@@ -205,15 +205,18 @@ btnSave.addEventListener('click', () => {
 });
 btnActive.addEventListener('click', () => {
     main.toggleAttribute("active");
-    toggleChecked(btnActive);
+    HTMLTaskList.querySelectorAll(`li[date-id="${activeTask.creationDate}"]`)[0].toggleAttribute("active");
+    toggleAriaChecked(btnActive);
 });
 btnImportant.addEventListener('click', () => {
     main.toggleAttribute("important");
-    toggleChecked(btnImportant);
+    HTMLTaskList.querySelectorAll(`li[date-id="${activeTask.creationDate}"]`)[0].toggleAttribute("important");
+    toggleAriaChecked(btnImportant);
 });
 btnCompleted.addEventListener('click', () => {
     main.toggleAttribute("completed");
-    toggleChecked(btnCompleted);
+    HTMLTaskList.querySelectorAll(`li[date-id="${activeTask.creationDate}"]`)[0].toggleAttribute("completed");
+    toggleAriaChecked(btnCompleted);
 });
 btnDeleteSingle.addEventListener('click', () => {
     deleteSingleTask();
@@ -270,12 +273,14 @@ function renderTaskList() {
 
         //Set listeners    
         let HTMLTasks = document.querySelectorAll('.tasklist-element');
-        HTMLTasks.forEach(HTMLTask => {       
+        HTMLTasks.forEach(HTMLTask => {
+            
             //Search selected task 
             HTMLTask.classList.remove('selected');
             if(typeof(activeTask) !== 'undefined' && HTMLTask.getAttribute('date-id') === activeTask.creationDate) {
                 HTMLTask.classList.add('selected');
             };
+
             //Checkbox listener
             let listElementCheckbox = HTMLTask.querySelector('.task-checkbox');
             listElementCheckbox.addEventListener('change', () => {
@@ -295,6 +300,7 @@ function renderTaskList() {
             } else {
                 setButtons(taskListBtns);
             };
+
             //Select task listener
             HTMLTask.querySelector('.task-selectable').addEventListener('click', () => {
                 if (!HTMLTask.classList.contains('selected')) {
@@ -318,6 +324,36 @@ function renderTaskList() {
                 window.scrollTo(0, 0);
             });
             mobilejsHideSidebarOnClick(HTMLTask.querySelector('.task-selectable'));
+
+            //Scrolling title on tasklist
+            let title = HTMLTask.getElementsByClassName('title')[0];
+            let titleBox = HTMLTask.getElementsByClassName('titlebox')[0];
+            let titleBoxWidth = HTMLTask.getElementsByClassName('titlebox')[0].offsetWidth;
+            let titleTextWidth = HTMLTask.getElementsByClassName('title')[0].scrollWidth;
+            let margin = 0;
+            let scroll;
+                            
+            if (titleTextWidth > titleBoxWidth) {
+                titleBox.addEventListener('mouseover', () => {
+                    scroll = setInterval(() => {
+                        title.style.transition = 'margin-left 300ms linear'
+                        title.style.marginLeft = `-${margin}px`;
+                        margin++;
+                        if (margin > titleTextWidth) {                        
+                            clearInterval(scroll);
+                            margin = 0;
+                            title.style.marginLeft = `-${margin}px`;
+                            title.style.transition = 'margin-left 300ms ease-in-out'
+                        };
+                    },10);
+                });
+                titleBox.addEventListener('mouseout', () => {
+                    clearInterval(scroll);
+                    margin = 0;
+                    title.style.marginLeft = `-${margin}px`;
+                    title.style.transition = 'margin-left 300ms ease-in-out';
+                });
+            };
         });
     };
     translateDom(lang);
@@ -355,7 +391,7 @@ function renderTask() {
         title.style.height = title.scrollHeight + 'px';
     };
 
-    //Date text on change listener    
+    //Date text on change listener
     date.addEventListener('change', () => {
         if (date.value === '') {
             dateText.setAttribute('txtkey','undated');
@@ -364,6 +400,7 @@ function renderTask() {
             dateText.innerHTML = getFormattedDate(date.value);
             dateText.removeAttribute('txtkey');
         };
+        //Check if expired
         let currentDate = new Date();
         let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
         let taskIsoDate = parseInt(dateText.innerHTML.replace(/-/g,''))
@@ -374,7 +411,7 @@ function renderTask() {
             main.removeAttribute("expired");
         };
     });
-    
+
     //Save task on Enter key keydown on task HTML title input
     title.addEventListener('keydown', (e) => {
         if(e.code === 'Enter' || e.code === 'NumpadEnter') {
@@ -399,16 +436,39 @@ function renderTask() {
     let btnCompletedMobile = document.getElementById('task-completed-mobile');
     btnActiveMobile.addEventListener('click', () => {
         main.toggleAttribute("active");
-        toggleChecked(btnActiveMobile);
+        toggleAriaChecked(btnActiveMobile);
     });
     btnImportantMobile.addEventListener('click', () => {
         main.toggleAttribute("important");
-        toggleChecked(btnImportantMobile);
+        toggleAriaChecked(btnImportantMobile);
     });
     btnCompletedMobile.addEventListener('click', () => {
         main.toggleAttribute("completed");
-        toggleChecked(btnCompletedMobile);
+        toggleAriaChecked(btnCompletedMobile);
     });
+
+    //Set aria-checked attribute on buttons
+    if (main.hasAttribute('active')) {
+        btnActive.setAttribute('aria-checked','true');
+        btnActiveMobile.setAttribute('aria-checked','true');
+    } else {
+        btnActive.setAttribute('aria-checked','false');
+        btnActiveMobile.setAttribute('aria-checked','false');
+    };
+    if (main.hasAttribute('important')) {
+        btnImportant.setAttribute('aria-checked','true');
+        btnImportantMobile.setAttribute('aria-checked','true');
+    } else {
+        btnImportant.setAttribute('aria-checked','false');
+        btnImportantMobile.setAttribute('aria-checked','false');
+    };
+    if (main.hasAttribute('completed')) {
+        btnCompleted.setAttribute('aria-checked','true');
+        btnCompletedMobile.setAttribute('aria-checked','true');
+    } else {        
+        btnCompleted.setAttribute('aria-checked','false');
+        btnCompletedMobile.setAttribute('aria-checked','false');
+    };
     
     //Set document title
     if (activeTask.title === '') {
@@ -417,7 +477,7 @@ function renderTask() {
         document.getElementsByTagName("title")[0].removeAttribute('txtkey');
         document.title = decodeURIComponent(activeTask.title);
     };
-    
+
     translateDom(lang);
 };
 
@@ -462,18 +522,12 @@ function renderWelcome() {
 //Check for unsaved changes
 unsavedChanges = () => {
     if(typeof(activeTask) !== 'undefined') {
-        let titleInDisplay = document.getElementById('title').value;
-        let dateInDisplay = document.getElementById('date').value;
-        let descriptionInDisplay = document.getElementById('description').value;
-        if(decodeURIComponent(activeTask.title) !== titleInDisplay || 
-            activeTask.date !== dateInDisplay || 
-            decodeURIComponent(activeTask.description) !== descriptionInDisplay || 
-            (!activeTask.isImportant && main.hasAttribute("important")) ||
-            (activeTask.isImportant && !main.hasAttribute("important")) || 
-            (!activeTask.isCompleted && main.hasAttribute("completed")) ||
-            (activeTask.isCompleted && !main.hasAttribute("completed")) ||
-            (!activeTask.isActive && main.hasAttribute("active")) ||
-            (activeTask.isActive && !main.hasAttribute("active"))) {
+        if(decodeURIComponent(activeTask.title) !== title.value || 
+            activeTask.date !== date.value || 
+            decodeURIComponent(activeTask.description) !== description.value || 
+            (activeTask.isImportant !== main.hasAttribute("important")) ||
+            (activeTask.isCompleted !== main.hasAttribute("completed")) ||
+            (activeTask.isActive !== main.hasAttribute("active"))) {
             return true;
         } else {
             return false;
@@ -496,7 +550,7 @@ function setButtons(btnArray) {
 };
 
 //Toggle 'aria checked' on buttons
-function toggleChecked(btn) {
+function toggleAriaChecked(btn) {
     if (btn.getAttribute('aria-checked') === 'true') {
         btn.setAttribute('aria-checked','false');
     } else {

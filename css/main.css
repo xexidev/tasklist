@@ -1,5 +1,5 @@
 /*Google Fonts*/
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap');
 
 /*Root*/
 :root {
@@ -34,6 +34,13 @@
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 	display: block;
+}
+p {
+    margin-block-start: 1.5rem;
+    margin-block-end: 1.5rem;
+}
+strong {
+    font-weight: 600;
 }
 table {
 	border-collapse: collapse;
@@ -112,25 +119,26 @@ button[disabled] {
 .toolbar button {
     background-color: transparent;
 }
+.toolbar button svg {
+    transition: fill 150ms ease-in-out;
+}
 
 /*Container*/
 .display {
+    max-width: 1150px;
     padding: 50px 70px 70px 70px;
     min-height: calc(100vh - var(--footer-height) - var(--toolbar-height));
 }
-.display .title {
+.display section {
+    padding-bottom: 3rem;
+}
+.display h1 .title,
+.display h1.title {
     font-weight: 300;
     color: var(--main-color);
     font-size: 3rem;
     width: 100%;
     margin-bottom: 0.5rem;
-}
-.display .subtitle {
-    font-weight: 500;
-    font-size: 1.2rem;
-    line-height: 1.5;
-    width: 100%;
-    margin-bottom: 1rem;
 }
 .display .btn {
     cursor: pointer;
@@ -154,6 +162,10 @@ button[disabled] {
     fill: var(--main-color-dark);
     
 }
+.display .code {
+    color: var(--main-color);
+    font-weight: 500;
+}
 
 /*Tasklist toolbar*/
 .list-btn svg {
@@ -176,7 +188,7 @@ button[disabled] {
 }
 
 /*Tasklist*/
-#tasklist {
+#sidebar nav {
     background-color: #fafafa;
 }
 
@@ -186,9 +198,11 @@ button[disabled] {
     flex-direction: row;
     cursor: pointer;
     border-bottom: 1px solid #cccccc;
+    transition: background-color 150ms ease-in-out;
 }
 .tasklist-element:hover {
     background-color: #f5f5f5;
+    transition: background-color 150ms ease-in-out;
 }
 .tasklist-element .task-check {
     width: 45px;
@@ -224,7 +238,7 @@ button[disabled] {
     font-size: 1.2rem;
     font-weight: 500;
     width: fit-content;
-    transition: all 300ms linear;
+    transition: margin-left 300ms linear, color 150ms ease-in-out;
 }
 .tasklist-element .task-data .title::after {
     content: '';
@@ -238,6 +252,7 @@ button[disabled] {
 }
 .tasklist-element .task-data .date {
     font-size: 0.8rem;
+    transition: color 150ms ease-in-out;
 }
 .tasklist-element .task-status {
     width: 45px;
@@ -245,13 +260,16 @@ button[disabled] {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 150ms ease-in-out;
 }
 .tasklist-element .task-status svg {
     fill: var(--main-color);
-    display: none;
+    opacity: 0;
+    transition: opacity 0ms ease-in-out, fill 150ms ease-in-out;
 }
 .tasklist-element.selected .task-status svg {
-    display: initial;
+    opacity: 1;
+    transition: opacity 150ms ease-in-out, fill 150ms ease-in-out;
 }
 .tasklist-element[expired] .task-status {
     background-color: var(--expired-color);
@@ -261,6 +279,9 @@ button[disabled] {
 }
 .tasklist-element[expired]:not([important]):not([completed]) .task-status svg {
     fill: #ffffff;
+}
+.tasklist-element[expired]:not([important]):not([completed]):not([active]) .task-status svg {
+    fill: var(--main-color);
 }
 .tasklist-element[important] .task-status {
     background-color: var(--important-color);
@@ -443,6 +464,7 @@ button[disabled] {
 #task form textarea:focus {
     outline: 0px!important;
 }
+
 /*Footer*/
 #footer {
     height: var(--footer-height);

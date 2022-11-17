@@ -1,0 +1,61 @@
+.document .display h2.title {
+    font-weight: 300;
+    color: var(--main-color);
+    font-size: 2rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+.document .display .subtitle {
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.document .display .titmark {
+    font-size: 1.1rem;
+}
+.document .display .titmark::before {
+    display: inline-block;
+    content: "";
+    background-color: #362D43;
+    width: 5px;
+    height: 0.8rem;
+    margin-right: 5px;
+}
+.document .display ul li {
+    padding-left: 10px;
+}
+.document .display ul li:before {
+    content: "";
+    border-radius: 50%;
+    background-color: #362D43;
+    height: 5px;
+    width: 5px;
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 0.2rem;
+}
+.document #sidebar nav {
+    height: 100%;
+}
+.document #sidebar #tasklist {
+    padding: 2rem 25px 1.5rem 25px;
+    position: sticky;
+    top: 0;
+}
+.document #sidebar #tasklist > li {
+    font-size: 1.2rem;
+    padding-bottom: 1rem;
+    font-weight: 500;
+}
+.document #sidebar #tasklist > li > ul > li {
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+    font-weight: 400;
+}
+@media (max-width:900px) {
+    body.sidebar-visible #sidebar {
+        min-height: auto!important;
+    }
+}

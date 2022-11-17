@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/main.css?ver=<?php echo filemtime(__DIR__.'/css/main.css') ?>">
     <link rel="stylesheet" href="./css/mobile.css?ver=<?php echo filemtime(__DIR__.'/css/mobile.css') ?>">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
     <title>Xexi TaskList</title>
 </head>
 <body>
@@ -19,12 +20,12 @@
             <div class="task-selectable" role="button">
                 <div class="task-data">
                     <div class="titlebox">
-                        <div class="title"></div>
+                        <h2 class="title"></h2>
                     </div>
                     <div class="date"></div>
                 </div>
                 <div class="task-status">
-                    <svg x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+                    <svg x="0px" y="0px" viewBox="0 0 200 200" xml:space="preserve">
                         <path d="M86.2,153.8c-2.5,0-5.1-1-7-2.9c-3.9-3.9-3.9-10.2,0-14L116,100L79.2,63.2c-3.9-3.9-3.9-10.2,0-14c3.9-3.9,10.2-3.9,14,0 L137.1,93c3.9,3.9,3.9,10.2,0,14l-43.8,43.8C91.3,152.8,88.8,153.8,86.2,153.8z"/>
                     </svg>
                 </div>
@@ -61,7 +62,9 @@
             </ul>
             <form action="#" id="form" tabindex="5000" ariaKey="taskArea" aria-label="Active Task Area">
                 <label for="title" txtkey="taskTitleLabel">Task title</label>
-                <textarea id="title" type="text" name="title" value="" phkey="taskTitle" placeholder="" spellcheck="false" ariaKey="taskAreaTitle" aria-label="Active Task Title" tabindex="5001"></textarea>
+                <h1>
+                    <textarea id="title" type="text" name="title" value="" phkey="taskTitle" placeholder="" spellcheck="false" ariaKey="taskAreaTitle" aria-label="Active Task Title" tabindex="5001"></textarea>
+                </h1>
                 <div class="date-box" tabindex="5002" ariaKey="taskAreaDate" aria-label="Active Task Deadline">
                 <label for="date" txtkey="taskDateLabel">Deadline: </label>
                     <div class="date-picker">
@@ -77,7 +80,7 @@
 
     <template id="without-tasks-template">
         <div id="without-tasks" class="display" tabindex="5000">
-            <div class="title" txtkey="noTasks">You have no tasks</div>
+            <h1 class="title" txtkey="noTasks">You have no tasks</h1>
             <div class="subtitle" txtkey="addFirstTask">Add your first task.</div>
             <div class="new-task-btn btn">
                 <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
@@ -90,7 +93,7 @@
 
     <template id="welcome-template">
         <div id="welcome" class="display" tabindex="5000">
-            <div class="title" txtkey="activeTasks">You have active tasks</div>
+            <h1 class="title" txtkey="activeTasks">You have active tasks</h1>
             <div class="subtitle" txtkey="selectOrCreateTask">Select a task from the list or create a new one.</div>
             <div class="new-task-btn btn">
                 <svg data-name="Layer 1" height="200" id="Layer_1" viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
@@ -206,17 +209,10 @@
 
         </div>
     </div>
-    <footer id="footer" role="contentinfo">
-        <div class="container">
-            <div class="footer-text">
-                <a href="https://www.xexi.es" target="_blank">xexi.es</a> · <a href="mailto:hola@xexi.es" target="_blank">hola@xexi.es</a> · xexi 2022
-            </div>
-        </div>
-    </footer>
+    <?php require('./template-parts/footer.php');?>
     <script src="./js/langs.js?ver=<?php echo filemtime(__DIR__.'/js/langs.js') ?>"></script>
     <script src="./js/translate.js?ver=<?php echo filemtime(__DIR__.'/js/translate.js') ?>"></script>
     <script src="./js/sidebar.js?ver=<?php echo filemtime(__DIR__.'/js/sidebar.js') ?>"></script>
     <script src="./js/app.js?ver=<?php echo filemtime(__DIR__.'/js/app.js') ?>"></script>
-    <script src="./js/animations.js?ver=<?php echo filemtime(__DIR__.'/js/animations.js') ?>"></script>
 </body>
 </html>

@@ -18,19 +18,12 @@ const langBtns = Array.from(document.getElementsByClassName('select-lang-btn'));
 const esBtn = document.getElementById('esBtn');
 const enBtn = document.getElementById('enBtn');
 
+//Language dropwdown
 languageBtn.addEventListener('click', () => {
-    if (languageList.classList.contains('visible')) {
-        languageList.classList.remove('visible');
-        languageList.classList.add('hidden');
-    } else
-    if (languageList.classList.contains('hidden')) {
-        languageList.classList.remove('hidden');
-        languageList.classList.add('visible');
-    } else {
-        languageList.classList.add('visible');
-    };
+    toggleLangDropdown();
 });
 
+//Close dropdown on click outside
 document.addEventListener('click', (e) => {
     if(!languageNodes.contains(e.target)) {
         languageList.classList.remove('visible');
@@ -38,117 +31,77 @@ document.addEventListener('click', (e) => {
     }
 })
 
-esBtn.addEventListener('click', () => {
+//Language buttons
+esBtn.addEventListener('click', (e) => {
     lang = 'es';
-    document.cookie = `lang=${lang};max-age=60*60*24*360`;
-    translateDom(lang);
-    translateJs(lang);
-    if (languageList.classList.contains('visible')) {
-        languageList.classList.remove('visible');
-        languageList.classList.add('hidden');
-    };
-    langBtns.forEach(btn => {
-        if (btn.classList.contains('selected')) {
-            btn.classList.remove('selected')
-        };
-    });
-    esBtn.classList.add('selected');
+    selectLanguage(e);
 });
-enBtn.addEventListener('click', () => {
+enBtn.addEventListener('click', (e) => {
     lang = 'en';
-    document.cookie = `lang=${lang};max-age=60*60*24*360`;
-    translateDom(lang);
-    translateJs(lang);
-    if (languageList.classList.contains('visible')) {
-        languageList.classList.remove('visible');
-        languageList.classList.add('hidden');
-    };
-    langBtns.forEach(btn => {
-        if (btn.classList.contains('selected')) {
-            btn.classList.remove('selected')
-        };
-    });
-    enBtn.classList.add('selected');
+    selectLanguage(e);
 });
 
-//Translate JS
+function selectLanguage(e) {
+    document.cookie = `lang=${lang};max-age=60*60*24*360`;
+    translateDom(lang);
+    translateJs(lang);
+    toggleLangDropdown();
+    langBtns.forEach(btn => {
+        if (btn.classList.contains('selected')) {
+            btn.classList.remove('selected')
+        };
+    });
+    e.target.classList.add('selected');
+}
+
+//Translate JS and set HTML TAG lang attribute
 translateJs(lang);
 function translateJs(language) {
     if (language === 'es') {
+        document.getElementsByTagName('html')[0].setAttribute('lang','es');
         jsText.es();
     };
     if (language === 'en') {
+        document.getElementsByTagName('html')[0].setAttribute('lang','en');
         jsText.en();
     };
 };
 
-//Translate DOM (Call this function after render)
+//Translate DOM (Call this function after renders)
 function translateDom(language) {
     const allDom = Array.from(document.getElementsByTagName('*'));
 
     allDom.forEach(node => {
-        if (language === 'es') {            
             //Texts
-            Object.getOwnPropertyNames(domText.es).forEach(property => {
+            Object.getOwnPropertyNames(domText[language]).forEach(property => {
                 if (property === node.getAttribute('txtkey')) {
-                    node.innerHTML = domText.es[property];
+                    node.innerHTML = domText[language][property];
                 };
             });
             //Placeholders
-            Object.getOwnPropertyNames(domPh.es).forEach(property => {
+            Object.getOwnPropertyNames(domPh[language]).forEach(property => {
                 if (property === node.getAttribute('phkey')) {
-                    node.setAttribute('placeholder',domPh.es[property]);
+                    node.setAttribute('placeholder',domPh[language][property]);
                 };
             });
             //Aria Labels
-            Object.getOwnPropertyNames(domAria.es).forEach(property => {
+            Object.getOwnPropertyNames(domAria[language]).forEach(property => {
                 if (property === node.getAttribute('ariakey')) {
-                    node.setAttribute('aria-label',domAria.es[property]);
+                    node.setAttribute('aria-label',domAria[language][property]);
                 };
             });
             //Titles
-            Object.getOwnPropertyNames(domTitle.es).forEach(property => {
+            Object.getOwnPropertyNames(domTitle[language]).forEach(property => {
                 if (property === node.getAttribute('titlekey')) {
-                    node.setAttribute('title',domTitle.es[property]);
+                    node.setAttribute('title',domTitle[language][property]);
                 };
             });
 
             //Translate button
-            languageText.innerHTML = 'Español';
-            esBtn.classList.add('selected');
-        };
-        if (language === 'en') {
-            //Texts
-            Object.getOwnPropertyNames(domText.en).forEach(property => {
-                if (property === node.getAttribute('txtkey')) {
-                    node.innerHTML = domText.en[property];
-                };
-            });
-            //Placeholders
-            Object.getOwnPropertyNames(domPh.en).forEach(property => {
-                if (property === node.getAttribute('phkey')) {
-                    node.setAttribute('placeholder',domPh.en[property]);
-                };
-            });
-            //Aria Labels
-            Object.getOwnPropertyNames(domAria.en).forEach(property => {
-                if (property === node.getAttribute('ariakey')) {
-                    node.setAttribute('aria-label',domAria.en[property]);
-                };
-            });
-            //Titles
-            Object.getOwnPropertyNames(domTitle.en).forEach(property => {
-                if (property === node.getAttribute('titlekey')) {
-                    node.setAttribute('title',domTitle.en[property]);
-                };
-            });
-            //Translate button
-            languageText.innerHTML = 'English';
-            enBtn.classList.add('selected');
-        };
+            setDropdown(lang);
     });
 
-    //Set date format
+    //Set date format when displayed
     const listDates = Array.from(document.getElementsByClassName('date'));
     const taskDate = document.getElementById('date-picker-text');
     const dateArray = [taskDate,...listDates];
@@ -161,6 +114,7 @@ function translateDom(language) {
     });
 };
 
+//Date formatter
 function getFormattedDate(date) {
     let newDate;
     if(date) {
@@ -175,4 +129,30 @@ function getFormattedDate(date) {
         };
     };
     return newDate;
-}
+};
+
+//Dropdown text and selected option
+function setDropdown(language) {
+    if (language === 'es') {
+        languageText.innerHTML = 'Español';
+        esBtn.classList.add('selected');
+    } else
+    if (language === 'en') {
+        languageText.innerHTML = 'English';
+        enBtn.classList.add('selected');
+    };
+};
+
+//Toggle language dropdown visibility
+function toggleLangDropdown() {    
+    if (languageList.classList.contains('visible')) {
+        languageList.classList.remove('visible');
+        languageList.classList.add('hidden');
+    } else
+    if (languageList.classList.contains('hidden')) {
+        languageList.classList.remove('hidden');
+        languageList.classList.add('visible');
+    } else {
+        languageList.classList.add('visible');
+    };
+};
