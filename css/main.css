@@ -140,6 +140,13 @@ button[disabled] {
     width: 100%;
     margin-bottom: 0.5rem;
 }
+.display .subtitle {
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    width: 100%;
+    margin-bottom: 1rem;
+}
 .display .btn {
     cursor: pointer;
     display: inline-flex;
