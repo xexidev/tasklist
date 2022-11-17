@@ -47,8 +47,3 @@
     padding-bottom: 0.5rem;
     font-weight: 400;
 }
-@media (max-width:900px) {
-    body.sidebar-visible #sidebar {
-        min-height: auto!important;
-    }
-}
