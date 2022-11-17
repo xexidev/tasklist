@@ -28,15 +28,12 @@ body.sidebar-visible #main {
 .display {
     padding: 30px 40px;
 }
-h1#title,
+.display h1 .title,
 .display h1.title {
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.2;
     margin-bottom: 0.8rem;
-}
-#title {
-    max-width: calc(100% - 50px);
 }
 .date-box {
     font-size: 0.9rem;
@@ -83,6 +80,14 @@ body.sidebar-visible #sidebar {
 /*Task*/
 #task {
     position: relative;
+}
+#title {
+    max-width: calc(100% - 50px);
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+    min-height: 2.2rem;
 }
 #task-status-btns {
     position: absolute;
