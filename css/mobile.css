@@ -28,8 +28,8 @@ body.sidebar-visible #main {
 .display {
     padding: 30px 40px;
 }
-#title,
-.display .title {
+h1#title,
+.display h1.title {
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.2;
