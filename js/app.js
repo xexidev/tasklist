@@ -403,7 +403,7 @@ function renderTask() {
         //Check if expired
         let currentDate = new Date();
         let isoDate = parseInt(currentDate.toISOString().split('T')[0].replace(/-/g,''));
-        let taskIsoDate = parseInt(dateText.innerHTML.replace(/-/g,''))
+        let taskIsoDate = parseInt(new Date(date.value).toISOString().split('T')[0].replace(/-/g,''));
         if (isoDate > taskIsoDate) {
             main.setAttribute("expired","");
         } else 
